@@ -44,7 +44,7 @@ function log_result() {
   for (var key in result) {
     var value = result[key];
     var percentage = Number(((value / 1000000) * 100).toFixed(2));
-    console.log(key, percentage, "%");
+    console.log(key, percentage, "%  Total appearances:", value);
   }
 }
 
