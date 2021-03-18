@@ -86,6 +86,7 @@ contract BlackJack{
         mapPlayer_card[msg.sender][player_index] = mapPlayerDeck[msg.sender][deck_index];
         mapPlayerDeckindex[msg.sender] += 1;
         mapPlayer_card_num[msg.sender] += 1;
+        Player_check(msg.sender);
     }
     function Casino_Hit(address player) private{
         require(
@@ -238,6 +239,7 @@ contract BlackJack{
             "require to finish previous phase before reaching the Player_Turn"
         );
         Player_check(user);
+        mapGamestate[msg.sender] == GameState.UserCommit;
     }
     //This is phase 6
     function Casino_Turn(address player) external{
