@@ -120,8 +120,8 @@ contract BlackJack{
             total += mapPlayer_card[player][i] % 13;
         }
         if (total > 21){
-            Casino_Win(player);
             mapGamestate[player] = GameState.Reveal;
+            Reveal(player);
         }
     }
     //similar to phase 4
