@@ -197,7 +197,7 @@ contract BlackJack {
     }
 
     //This is phase 1
-    function itializeGame() external payable {
+    function initializeGame() external payable {
         require(
             msg.sender != casino,
             "Casinos cannot play a game with themselves"
