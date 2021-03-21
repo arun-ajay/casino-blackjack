@@ -151,7 +151,7 @@ contract BlackJack {
         }
     }
 
-    function compare(address player) private view returns (string result) {
+    function compare(address player) private view returns (string memory) {
         uint256 player_total = 0;
         uint256 casino_total = 0;
         for (uint256 i = 0; i < mapPlayer_card_num[player]; i++) {
@@ -279,9 +279,9 @@ contract BlackJack {
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
-        string won = "won";
-        string lost = "lost";
-        string push = "push";
+        string memory won = "won";
+        string memory lost = "lost";
+        string memory push = "push";
         if (
             keccak256(abi.encodePacked(compare(player))) ==
             keccak256(abi.encodePacked(won))
@@ -293,7 +293,7 @@ contract BlackJack {
         ) {
             Casino_Win(player);
         } else {
-            Game_Pushed(player);
+            Game_Pushed(payable(player));
         }
     }
 
