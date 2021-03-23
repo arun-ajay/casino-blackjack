@@ -243,7 +243,6 @@ contract BlackJack {
             mapGamestate[user] == GameState.Car_Distribution,
             "Play needs to initilize the game"
         );
-        Casino_check(user);
         mapGamestate[msg.sender] = GameState.Player_Turn;
     }
 
