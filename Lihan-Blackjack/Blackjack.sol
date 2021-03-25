@@ -153,6 +153,25 @@ contract BlackJack {
         return returnData;
     }
 
+    // 3 functions for testing purpose
+    function Reveal_player_card() external view returns (uint256[12] memory) {
+        return mapPlayer_card[msg.sender];
+    }
+
+    function Reveal_casino_card(address player)
+        external
+        view
+        returns (uint256[12] memory)
+    {
+        return mapCasino_card[player];
+    }
+
+    function shuffle(address player) private {
+        for (uint256 i = 0; i < 52; i++) {
+            mapGameDeck[player][i] = i;
+        }
+    }
+
     //This is phase 1
     function initializeGame() external payable {
         require(
@@ -204,16 +223,27 @@ contract BlackJack {
 
     //This is phase 2
     //pass the card to the mapGameDeck
-    function Casino_get_deck(address user, uint256[52] calldata shuffledCards)
-        external
-    {
+    // function Casino_get_deck(address user, uint256[52] calldata shuffledCards)
+    //     external
+    // {
+    //     require(msg.sender == casino, "Only casino can call this function");
+    //     require(
+    //         mapGamestate[user] == GameState.Deck_shuffle,
+    //         "Play needs to initilize the game"
+    //     );
+    //     mapGamestate[user] = GameState.Car_Distribution;
+    //     mapGameDeck[user] = shuffledCards;
+    // }
+
+    function Casino_get_deck(address user) external {
         require(msg.sender == casino, "Only casino can call this function");
         require(
             mapGamestate[user] == GameState.Deck_shuffle,
             "Play needs to initilize the game"
         );
+        shuffle(user);
         mapGamestate[user] = GameState.Car_Distribution;
-        mapGameDeck[user] = shuffledCards;
+        // mapGameDeck[user] = shuffledCards;
     }
 
     // Phase 3: Distribute cards
@@ -286,7 +316,11 @@ contract BlackJack {
         }
         mapGameDeckindex[msg.sender] += 1;
         mapPlayer_card_num[msg.sender] += 1;
-        Player_check(msg.sender);
+
+        if (Player_check(msg.sender) > 21) {
+            mapGamestate[msg.sender] = GameState.Reveal;
+            Reveal(msg.sender);
+        }
     }
 
     // Only for player
@@ -303,7 +337,7 @@ contract BlackJack {
     // casino only function
     function Casino_Hit(address player) private {
         require(
-            mapGamestate[msg.sender] == GameState.Casino_Turn,
+            mapGamestate[player] == GameState.Casino_Turn,
             "Player has not finish yet"
         );
         uint256 deck_index = mapGameDeckindex[player];
@@ -314,7 +348,11 @@ contract BlackJack {
         }
         mapGameDeckindex[player] += 1;
         mapCasino_card_num[player] += 1;
-        Casino_check(player);
+
+        if (Casino_check(player) > 21) {
+            mapGamestate[player] = GameState.Reveal;
+            Reveal(player);
+        }
     }
 
     // this is Phase 6
@@ -324,16 +362,16 @@ contract BlackJack {
             "This function is only for casinos to use."
         );
         require(
-            mapGamestate[msg.sender] == GameState.Casino_Turn,
+            mapGamestate[Player] == GameState.Casino_Turn,
             "It is not the Casino's turn now"
         );
 
-        while (mapGamestate[Player] == GameState.Casino_Turn) {
-            if (Casino_check(Player) < 17) {
-                Casino_Hit(Player);
-            } else if (Casino_check(Player) >= 17) {
-                mapGamestate[Player] == GameState.Reveal;
-            }
+        while (Casino_check(Player) < 17) {
+            Casino_Hit(Player);
+        }
+
+        if (Casino_check(Player) >= 17) {
+            mapGamestate[Player] = GameState.Reveal;
         }
     }
 
@@ -464,7 +502,10 @@ contract BlackJack {
             keccak256(abi.encodePacked(lost))
         ) {
             Casino_Win(player);
-        } else {
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(push))
+        ) {
             Game_Pushed(payable(player));
         }
     }
