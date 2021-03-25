@@ -38,6 +38,18 @@ contract BlackJack {
 
     //Generate random number for other public key and private key
     function Random() private {}
+    function Generate_public(address player) external {
+        
+    }
+    function Generate_secret(address player) private{
+        
+    }
+    function Combine_key(address player) external{
+        
+    }
+    function Generate_private(address player) private{
+        
+    }
 
     //Withdraw money from the smart contract
     function withdrawMoney() external {
@@ -77,7 +89,17 @@ contract BlackJack {
     //Set mapPlayerSplit to true
     //Shuffle the card
     //player can view their current cards
-    function Reveal_card() external view {}
+    function Reveal_player_card() external view returns(uint256[12] memory) {
+        return mapPlayer_card[msg.sender];
+    }
+    function Reveal_casino_card(address player) external view returns(uint256[12] memory){
+        return mapCasino_card[player];
+    }
+    function shuffle(address player) private{
+        for (uint256 i = 0; i < 52; i++){
+            mapPlayerDeck[player][i] = i;
+        }
+    }
 
     //player draws a card
     //only for player
@@ -85,7 +107,7 @@ contract BlackJack {
         require(msg.sender != casino, "Only player can call this function");
         require(
             mapGamestate[msg.sender] == GameState.Player_Turn,
-            "Casino has not distribute the card yet"
+            "It is not your turn yet!"
         );
         uint256 deck_index = mapPlayerDeckindex[msg.sender];
         uint256 player_index = mapPlayer_card_num[msg.sender];
@@ -99,7 +121,7 @@ contract BlackJack {
 
     function Casino_Hit(address player) private {
         require(
-            mapGamestate[msg.sender] == GameState.Casino_Turn,
+            mapGamestate[player] == GameState.Casino_Turn,
             "Player has not finish yet"
         );
         uint256 deck_index = mapPlayerDeckindex[player];
@@ -109,7 +131,19 @@ contract BlackJack {
         ];
         mapPlayerDeckindex[player] += 1;
         mapCasino_card_num[player] += 1;
-        Casino_check(player);
+        uint256 total = 0;
+        for (uint256 i = 0; i < mapCasino_card_num[player]; i++) {
+            uint256 temp = mapCasino_card[player][i]  % 13 + 1; 
+            if(temp >= 9){
+                total += 10;
+            }
+            else{
+                total += temp;
+            }
+        }
+        if (total <= 17){
+            Casino_Hit(player);
+        }
     }
 
     //only for player
@@ -130,15 +164,20 @@ contract BlackJack {
         }
         if (total > 21) {
             mapGamestate[player] = GameState.Reveal;
-            Reveal(player);
         }
     }
-
+/*
     //similar to phase 4
     function Casino_check(address player) private {
         uint256 total = 0;
         for (uint256 i = 0; i < mapCasino_card_num[player]; i++) {
-            total += mapCasino_card[player][i] % 13;
+            uint256 temp = mapCasino_card[player][i]  % 13 + 1; 
+            if(temp >= 9){
+                total += 10;
+            }
+            else{
+                total += temp;
+            }
         }
         if (total == 21) {
             Casino_Win(payable(player));
@@ -150,15 +189,28 @@ contract BlackJack {
             mapGamestate[player] = GameState.Reveal;
         }
     }
-
+*/
     function compare(address player) private view returns (string memory) {
         uint256 player_total = 0;
         uint256 casino_total = 0;
         for (uint256 i = 0; i < mapPlayer_card_num[player]; i++) {
-            player_total += mapPlayer_card[player][i] % 13;
+             uint256 temp = mapPlayer_card[player][i]  % 13 + 1; 
+            if(temp >= 9){
+                player_total += 10;
+            }
+            else{
+                player_total += temp;
+            }
         }
         for (uint256 i = 0; i < mapCasino_card_num[player]; i++) {
-            casino_total += mapCasino_card[player][i] % 13;
+            uint256 temp = mapCasino_card[player][i] % 13 + 1;
+            if(temp >= 9){
+                casino_total += 10;
+            }
+            else{
+                casino_total += temp;
+            }
+            
         }
 
         //determine game result
@@ -180,8 +232,8 @@ contract BlackJack {
     }
 
     function Check_Split(address player) private view returns (bool) {
-        uint256 first = mapPlayer_card[player][0] % 13;
-        uint256 second = mapPlayer_card[player][1] % 13;
+        uint256 first = mapPlayer_card[player][0] % 13 + 1;
+        uint256 second = mapPlayer_card[player][1] % 13 + 1;
         if (first == second) {
             return true;
         }
@@ -233,21 +285,39 @@ contract BlackJack {
             mapGamestate[user] == GameState.Deck_shuffle,
             "Play needs to initilize the game"
         );
+        shuffle(user);
         mapGamestate[user] = GameState.Car_Distribution;
     }
 
     //This is phase 3
-    function Casino_distribution(address user) external {
+    function Casino_distribution(address player) external {
         require(msg.sender == casino, "Only casino can call this function");
         require(
-            mapGamestate[user] == GameState.Car_Distribution,
-            "Play needs to initilize the game"
+            mapGamestate[player] == GameState.Car_Distribution,
+            "Player needs to initilize the game"
         );
-        mapGamestate[msg.sender] = GameState.Player_Turn;
+        mapCasino_card[player][mapCasino_card_num[player]] = mapPlayerDeck[player][mapPlayerDeckindex[player]];
+        mapPlayerDeckindex[player] += 1;
+        mapCasino_card_num[player] += 1;
+        
+        mapPlayer_card[player][mapPlayer_card_num[player]] = mapPlayerDeck[player][mapPlayerDeckindex[player]];
+        mapPlayerDeckindex[player] += 1;
+        mapPlayer_card_num[player] += 1;
+        
+        mapCasino_card[player][mapCasino_card_num[player]] = mapPlayerDeck[player][mapPlayerDeckindex[player]];
+        mapPlayerDeckindex[player] += 1;
+        mapCasino_card_num[player] += 1;
+        
+        mapPlayer_card[player][mapPlayer_card_num[player]] = mapPlayerDeck[player][mapPlayerDeckindex[player]];
+        mapPlayerDeckindex[player] += 1;
+        mapPlayer_card_num[player] += 1;
+        
+        mapGamestate[player] = GameState.Player_Turn;
     }
 
     //This is phase 5
     //check the total value of player's car
+    /*
     function Player_Turn(address user) external {
         require(
             msg.sender != casino,
@@ -258,29 +328,29 @@ contract BlackJack {
             "require to finish previous phase before reaching the Player_Turn"
         );
         Player_check(user);
-        mapGamestate[msg.sender] == GameState.Casino_Turn;
+        mapGamestate[msg.sender] = GameState.Casino_Turn;
     }
-
+*/
     //This is phase 6
     function Casino_Turn(address player) external {
         require(msg.sender == casino, "Only casino can call this function");
         require(
-            mapGamestate[msg.sender] == GameState.Casino_Turn,
-            "require to finish previous phase before reaching the Player_Turn"
+            mapGamestate[player] == GameState.Casino_Turn,
+            "require to finish previous phase before reaching the Casino_Turn"
         );
-        Casino_check(player);
-        Reveal(player);
+        Casino_Hit(player);
+        mapGamestate[player] = GameState.Reveal;
     }
 
     //print the outcome
-    function Reveal(address player) public {
+    function Reveal(address player) external {
         require(
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
         string memory won = "won";
         string memory lost = "lost";
-        string memory push = "push";
+        //string memory push = "push";
         if (
             keccak256(abi.encodePacked(compare(player))) ==
             keccak256(abi.encodePacked(won))
