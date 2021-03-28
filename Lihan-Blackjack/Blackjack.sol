@@ -291,10 +291,24 @@ contract BlackJack {
         mapPlayer_card_num[user] += 1;
         mapGameDeckindex[user] += 1;
 
-        // update game state
-        mapGamestate[user] = GameState.Player_Turn;
+        //check if game already meet winning condition after inital card distrubution
+        if(Casino_check(user) == 21 && Player_check(user) == 21){
+          mapGamestate[user] = GameState.Reveal;
+          mapGameResult[user] = GameResult.Push;
+        }
+        else if(Casino_check(user) == 21){
+          mapGamestate[user] = GameState.Reveal;
+          mapGameResult[user] = GameResult.Lost;
+        }
+        else if(Player_check(user) == 21){
+          mapGamestate[user] = GameState.Reveal;
+          mapGameResult[user] = GameResult.Won;
+        }
+        else {
+          mapGamestate[user] = GameState.Player_Turn;
+        }
     }
-
+    
     // Player Hit & Stand make up Phase 5
     // player draws a card
     // player only function
