@@ -293,16 +293,13 @@ contract BlackJack {
 
         //check if game already meet winning condition after inital card distrubution
         if(Casino_check(user) == 21 && Player_check(user) == 21){
-          mapGamestate[user] = GameState.Reveal;
-          mapGameResult[user] = GameResult.Push;
+          Game_Pushed(user);
         }
         else if(Casino_check(user) == 21){
-          mapGamestate[user] = GameState.Reveal;
-          mapGameResult[user] = GameResult.Lost;
+          Casino_Win(user);
         }
         else if(Player_check(user) == 21){
-          mapGamestate[user] = GameState.Reveal;
-          mapGameResult[user] = GameResult.Won;
+          Player_Win(user);
         }
         else {
           mapGamestate[user] = GameState.Player_Turn;
@@ -531,7 +528,7 @@ contract BlackJack {
         mapBet[player] = 0;
     }
 
-    //Smart contract transfer the money to the casino
+    //Smart contract transfer the money to the player
     function Player_Win(address payable player) private {
         mapGamestate[player] = GameState.Inactive;
         mapGameResult[player] = GameResult.Won;
