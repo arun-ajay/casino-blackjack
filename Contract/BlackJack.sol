@@ -184,7 +184,7 @@ contract BlackJack{
     function getCasinoHand() public view returns (uint256[12] memory){
 
 
-        require(mapGameState[msg.sender] == GameState.Reveal,
+        require(mapGamestate[msg.sender] == GameState.Reveal,
         "Cannot reveal all the cards yet!");
 
         uint256[12] memory returnData = mapCasino_card[msg.sender];
@@ -265,7 +265,7 @@ contract BlackJack{
             "Play needs to initilize the game"
             );
         mapGamestate[user] = GameState.Car_Distribution;
-        mapPlayerDeck[user] = shuffledCards; //NOTE: shuffled cards should  come from hash
+        mapGameDeck[user] = shuffledCards; //NOTE: shuffled cards should  come from hash
     }
 
 
