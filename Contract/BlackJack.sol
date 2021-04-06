@@ -62,6 +62,10 @@ contract BlackJack{
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
     uint256 public minBet = 0.001 ether;
+    
+    constructor() public{
+        casino = msg.sender;
+    }
 
 
 
