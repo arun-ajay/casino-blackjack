@@ -49,6 +49,9 @@ contract BlackJack{
     //Keeps track of bets placed on each game
     mapping(address => uint256) public mapBet;
 
+    mapping(address => uint256) public mapRevealExpiration;
+    mapping(address => uint256) public mapPlayerTurnExpiration;
+
     //Keeps track of game state and result using enumerators above
     mapping(address => GameState) public mapGamestate;
     mapping(address => GameResult) public mapGameResult;
@@ -62,6 +65,7 @@ contract BlackJack{
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
     uint256 public minBet = 0.001 ether;
+    uint256 public expireTime  = 1; //ONE MINUTE EXPIRATION
     
     constructor() public{
         casino = msg.sender;
@@ -140,6 +144,45 @@ contract BlackJack{
         }
 
         return phase3;
+    }
+
+    function getPhase5Games() public view returns (address[] memory) {
+        require(
+            msg.sender == casino,
+            "You are not permitted to access this function"
+        );
+
+        address[] memory phase5 = new address[](addressKeys.length);
+
+        for (uint256 i = 0; i < addressKeys.length; i++) {
+            if (mapGamestate[addressKeys[i]] == GameState.Casino_Turn) {
+                phase5[i] = addressKeys[i];
+            }
+        }
+
+        return phase5;
+    }
+
+    function getExpiredReveal() public view returns (address[] memory){
+        require(
+            msg.sender == casino,
+            "You are not permitted to access this function"
+        );
+
+        address[] memory phase5 = new address[](addressKeys.length);
+
+        for (uint256 i = 0; i < addressKeys.length; i++) {
+
+            if(mapGamestate[addressKeys[i]] == GameState.Reveal){
+                if (block.timestamp > mapRevealExpiration[addressKeys[i]] + expireTime) {
+                    phase5[i] = addressKeys[i];
+                }
+            }
+
+
+        }
+        
+        return phase5;
     }
 
     //END OF BACKEND
@@ -417,6 +460,7 @@ contract BlackJack{
         }
 
         mapGamestate[Player] = GameState.Reveal;
+        mapRevealExpiration[Player] = block.timestamp;
     }
 
 
