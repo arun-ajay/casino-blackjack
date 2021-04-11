@@ -420,7 +420,30 @@ contract BlackJack{
     }
 
 
-
+    function CheckPlayerCasinoCard(address player) private view returns(bool){
+        uint256 count = 0;
+        if(mapCasino_card[player][0] != mapGameDeck[player][0] && mapCasino_card[player][1] != mapGameDeck[player][1]){
+            return false;
+        } 
+        if(mapPlayer_card[player][0] != mapGameDeck[player][2] && mapPlayer_card[player][1] != mapGameDeck[player][3]){
+            return false;
+        } 
+        count = 4;
+        for(uint256 i = 2; i < mapPlayer_card_num[player]; i++){
+            if(mapPlayer_card[player][i] != mapGameDeck[player][count]){
+                return false;
+            }
+            count = count + 1;
+        }
+        for(uint256 j = 2; j < mapCasino_card_num[player]; j++){
+            if(mapCasino_card[player][j] != mapGameDeck[player][count]){
+                return false;
+            }
+            count = count + 1;
+        }
+        return true;
+        
+    }
 
     // This is phase 6
     function Payout(address player) public {
@@ -428,6 +451,7 @@ contract BlackJack{
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
+        require(CheckPlayerCasinoCard(player),'Cheating Detect!!!');
         string memory won = "won";
         string memory lost = "lost";
         string memory push = "push";
