@@ -26,31 +26,31 @@ contract BlackJack{
 
 
     //Player Hand
-    mapping(address => uint256[12]) mapPlayer_card;
+    mapping(address => uint256[12]) private mapPlayer_card;
     //Casino Hand
-    mapping(address => uint256[12]) mapCasino_card;
+    mapping(address => uint256[12]) private mapCasino_card;
 
     //Keeps track of index of player and casino hand
     //Useful for knowing where to place card on our size 12 array
-    mapping(address => uint256) mapPlayer_card_num;
-    mapping(address => uint256) mapCasino_card_num;
+    mapping(address => uint256) private mapPlayer_card_num;
+    mapping(address => uint256) private mapCasino_card_num;
 
     //Keeps track of what card is at the "top"
     //of our deck via indexes
-    mapping(address => uint256) mapGameDeckindex;
+    mapping(address => uint256) private mapGameDeckindex;
 
     //The hash of the game deck per player
     mapping(address => uint256) public mapCasinoHash;
 
 
     //Keeps track of deck for each game per user address
-    mapping(address => uint256[52]) public mapGameDeck;
+    mapping(address => uint256[52]) private mapGameDeck;
 
     //Keeps track of bets placed on each game
     mapping(address => uint256) public mapBet;
 
-    mapping(address => uint256) public mapRevealExpiration;
-    mapping(address => uint256) public mapPlayerTurnExpiration;
+    mapping(address => uint256) private mapRevealExpiration;
+    mapping(address => uint256) private mapPlayerTurnExpiration;
 
     //Keeps track of game state and result using enumerators above
     mapping(address => GameState) public mapGamestate;
@@ -58,8 +58,8 @@ contract BlackJack{
 
     
     //Keeps track of how many aces are in each hand
-    mapping(address => uint256) public player_AceCount;
-    mapping(address => uint256) public casino_AceCount;
+    mapping(address => uint256) private player_AceCount;
+    mapping(address => uint256) private casino_AceCount;
 
 
     //Keeps a log of all addresses that interacted with this smart contract
@@ -109,6 +109,7 @@ contract BlackJack{
 
         return currentBalance - 2 * boundMoney;
     }
+
 
 
     //FOR BACKEND -  Casino bot
@@ -235,6 +236,18 @@ contract BlackJack{
         "Cannot reveal all the cards yet!");
 
         uint256[12] memory returnData = mapCasino_card[msg.sender];
+
+        return returnData;
+    }
+
+    //UI can call this during reveal phase only
+    function getGameDeck() public view returns (uint256[52] memory){
+
+
+        require(mapGamestate[msg.sender] == GameState.Reveal,
+        "Cannot reveal all the cards yet!");
+
+        uint256[52] memory returnData = mapGameDeck[msg.sender];
 
         return returnData;
     }
