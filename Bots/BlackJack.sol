@@ -40,7 +40,7 @@ contract BlackJack{
     mapping(address => uint256) private mapGameDeckindex;
 
     //The hash of the game deck per player
-    mapping(address => uint256) public mapCasinoHash;
+    mapping(address => bytes32[52]) public mapCasinoHash;
 
 
     //Keeps track of deck for each game per user address
@@ -315,7 +315,7 @@ contract BlackJack{
 
     //PHASE TWO - OPEN DECK
     // REVISIT! Need to accommodate for hash
-    function Casino_get_deck(address user, uint256[52] calldata shuffledCards) external{
+    function Casino_get_deck(address user, uint256[52] calldata shuffledCards, bytes32[52] calldata hashedCards) external{
          require(
             msg.sender == casino,
             "Only casino can call this function"
@@ -324,6 +324,9 @@ contract BlackJack{
             mapGamestate[user] == GameState.Deck_shuffle,
             "Play needs to initilize the game"
             );
+        
+     
+        mapCasinoHash[user] = hashedCards;
         mapGamestate[user] = GameState.Car_Distribution;
         mapGameDeck[user] = shuffledCards; //NOTE: shuffled cards should  come from hash
     }
@@ -477,38 +480,92 @@ contract BlackJack{
     }
 
 
-    function CheckPlayerCasinoCard(address player) private view returns(bool){
-        uint256 count = 0;
-        if(mapCasino_card[player][0] != mapGameDeck[player][0] && mapCasino_card[player][1] != mapGameDeck[player][1]){
-            return false;
-        } 
-        if(mapPlayer_card[player][0] != mapGameDeck[player][2] && mapPlayer_card[player][1] != mapGameDeck[player][3]){
-            return false;
-        } 
-        count = 4;
-        for(uint256 i = 2; i < mapPlayer_card_num[player]; i++){
-            if(mapPlayer_card[player][i] != mapGameDeck[player][count]){
+    function CheckPlayerCasinoCard(address player, uint256 secretKey) private view returns(bool){
+
+        uint256 [] memory reconstructDeck = new uint256[](52);
+
+        uint256 casinoHandIndex= 0;
+        uint256 playerHandIndex= 0;
+        uint256 reconstructIndex = 0;
+
+        reconstructDeck[reconstructIndex] = mapCasino_card[player][casinoHandIndex];
+        reconstructIndex += 1;
+        casinoHandIndex += 1;
+
+        reconstructDeck[reconstructIndex] = mapCasino_card[player][casinoHandIndex];
+        reconstructIndex += 1;
+        casinoHandIndex += 1;
+
+        reconstructDeck[reconstructIndex] = mapPlayer_card[player][playerHandIndex];
+        reconstructIndex += 1;
+        playerHandIndex += 1;
+
+        reconstructDeck[reconstructIndex] = mapCasino_card[player][playerHandIndex];
+        reconstructIndex += 1;
+        playerHandIndex += 1;
+
+        while (mapPlayer_card[player][playerHandIndex] != 100){
+            reconstructDeck[reconstructIndex] = mapPlayer_card[player][playerHandIndex];
+            reconstructIndex += 1;
+            playerHandIndex += 1;
+        }
+
+        while (mapCasino_card[player][casinoHandIndex] != 100){
+            reconstructDeck[reconstructIndex] = mapCasino_card[player][casinoHandIndex];
+            reconstructIndex += 1;
+            playerHandIndex += 1;
+        }
+
+        while(reconstructIndex != 52){
+            reconstructDeck[reconstructIndex] = mapGameDeck[player][reconstructIndex];
+            reconstructIndex += 1;
+        }
+        bytes32 [] memory reconstructDeckHash = new bytes32[](52);
+        
+        for (uint i = 0; i < 52; i++){
+            reconstructDeckHash[i] = keccak256(abi.encodePacked(uint256(secretKey),reconstructDeck[i]));
+        }
+        
+        for (uint i = 0; i < 52; i++){
+
+            if (reconstructDeckHash[i] != mapCasinoHash[player][i]){
                 return false;
             }
-            count = count + 1;
         }
-        for(uint256 j = 2; j < mapCasino_card_num[player]; j++){
-            if(mapCasino_card[player][j] != mapGameDeck[player][count]){
-                return false;
-            }
-            count = count + 1;
-        }
+
         return true;
+
+        // uint256 count = 0;
+        // if(mapCasino_card[player][0] != mapGameDeck[player][0] && mapCasino_card[player][1] != mapGameDeck[player][1]){
+        //     return false;
+        // } 
+        // if(mapPlayer_card[player][0] != mapGameDeck[player][2] && mapPlayer_card[player][1] != mapGameDeck[player][3]){
+        //     return false;
+        // } 
+        // count = 4;
+        // for(uint256 i = 2; i < mapPlayer_card_num[player]; i++){
+        //     if(mapPlayer_card[player][i] != mapGameDeck[player][count]){
+        //         return false;
+        //     }
+        //     count = count + 1;
+        // }
+        // for(uint256 j = 2; j < mapCasino_card_num[player]; j++){
+        //     if(mapCasino_card[player][j] != mapGameDeck[player][count]){
+        //         return false;
+        //     }
+        //     count = count + 1;
+        // }
+        // return true;
         
     }
 
     // This is phase 6
-    function Payout(address player) public {
+    function Payout(address player, uint256 secretKey) public {
         require(
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
-        require(CheckPlayerCasinoCard(player),'Cheating Detect!!!');
+        require(CheckPlayerCasinoCard(player,secretKey),'Cheating Detect!!!');
         string memory won = "won";
         string memory lost = "lost";
         string memory push = "push";

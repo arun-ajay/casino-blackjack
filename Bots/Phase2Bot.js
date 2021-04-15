@@ -68,6 +68,17 @@ const phase2Response =  async (activeGames) => {
         activeGame = activeGames[i]
         var freshDeck = openCards()
 
+        var freshDeckHash = []
+
+        for (var i in freshDeck) {
+          kek = web3.utils.soliditySha3(
+            web3.eth.abi.encodeParameters(["uint256", "uint256"], [123, freshDeck[i]])
+          );
+          freshDeckHash[i] = kek
+        }
+
+
+
         console.log("Creating fresh deck for user:",activeGame)
 
         const params = {
@@ -86,9 +97,9 @@ const phase2Response =  async (activeGames) => {
         }
     
         const gasPrice = await web3.eth.getGasPrice();
-        const gasEstimate = await casinoContract.methods.Casino_get_deck(activeGame,freshDeck).estimateGas({ from: myAddress, to: activeGame  });
+        const gasEstimate = await casinoContract.methods.Casino_get_deck(activeGame,freshDeck,freshDeckHash).estimateGas({ from: myAddress, to: activeGame  });
         
-        const response = await casinoContract.methods.Casino_get_deck(activeGame,freshDeck).send({from: myAddress, to: activeGame, gasPrice: gasPrice, gas: gasEstimate })
+        const response = await casinoContract.methods.Casino_get_deck(activeGame,freshDeck,freshDeckHash).send({from: myAddress, to: activeGame, gasPrice: gasPrice, gas: gasEstimate })
         console.log("Done!")
         console.log(response)
         console.log()
