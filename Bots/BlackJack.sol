@@ -1,29 +1,20 @@
 pragma solidity 0.6.6;
 
-contract BlackJack{
-
+contract BlackJack {
     address public casino;
-
 
     //Denotes each phase in the game
     enum GameState {
-        Inactive, 
-        Deck_shuffle, 
-        Car_Distribution, 
-        Player_Turn, 
+        Inactive,
+        Deck_shuffle,
+        Car_Distribution,
+        Player_Turn,
         Casino_Turn,
         Reveal
     }
-    
-    //Generic description of game result
-    enum GameResult {
-        None,
-        InProgress,
-        Won,
-        Lost,
-        Push
-    }
 
+    //Generic description of game result
+    enum GameResult {None, InProgress, Won, Lost, Push}
 
     //Player Hand
     mapping(address => uint256[12]) private mapPlayer_card;
@@ -42,7 +33,6 @@ contract BlackJack{
     //The hash of the game deck per player
     mapping(address => bytes32[52]) public mapCasinoHash;
 
-
     //Keeps track of deck for each game per user address
     mapping(address => uint256[52]) private mapGameDeck;
 
@@ -56,22 +46,18 @@ contract BlackJack{
     mapping(address => GameState) public mapGamestate;
     mapping(address => GameResult) public mapGameResult;
 
-    
     //Keeps track of how many aces are in each hand
     mapping(address => uint256) private player_AceCount;
     mapping(address => uint256) private casino_AceCount;
 
-
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
     uint256 public minBet = 0.001 ether;
-    uint256 public expireTime  = 1; //ONE MINUTE EXPIRATION
-    
-    constructor() public{
+    uint256 public expireTime = 1; //ONE MINUTE EXPIRATION
+
+    constructor() public {
         casino = msg.sender;
     }
-
-
 
     //Withdraw money from the smart contract
     //This is dependent on maxbet()
@@ -82,7 +68,6 @@ contract BlackJack{
         );
         payable(msg.sender).transfer(address(this).balance);
     }
-
 
     //Deposit money to the smart contract
     function depositMoney() external payable {
@@ -96,7 +81,6 @@ contract BlackJack{
         payable(address(this)).transfer(msg.value);
     }
 
-
     //Check the maxbet value
     function maxBet() public view returns (uint256) {
         uint256 currentBalance = address(this).balance;
@@ -109,8 +93,6 @@ contract BlackJack{
 
         return currentBalance - 2 * boundMoney;
     }
-
-
 
     //FOR BACKEND -  Casino bot
     function getPhase2Games() public view returns (address[] memory) {
@@ -164,7 +146,7 @@ contract BlackJack{
         return phase5;
     }
 
-    function getExpiredReveal() public view returns (address[] memory){
+    function getExpiredReveal() public view returns (address[] memory) {
         require(
             msg.sender == casino,
             "You are not permitted to access this function"
@@ -173,16 +155,16 @@ contract BlackJack{
         address[] memory phase5 = new address[](addressKeys.length);
 
         for (uint256 i = 0; i < addressKeys.length; i++) {
-
-            if(mapGamestate[addressKeys[i]] == GameState.Reveal){
-                if (block.timestamp > mapRevealExpiration[addressKeys[i]] + expireTime) {
+            if (mapGamestate[addressKeys[i]] == GameState.Reveal) {
+                if (
+                    block.timestamp >
+                    mapRevealExpiration[addressKeys[i]] + expireTime
+                ) {
                     phase5[i] = addressKeys[i];
                 }
             }
-
-
         }
-        
+
         return phase5;
     }
 
@@ -191,11 +173,14 @@ contract BlackJack{
     //FOR FRONTEND - React
 
     //Always reveal the player hand
-    function getPlayerHand(address user) public view returns (uint256[12] memory){
-
+    function getPlayerHand(address user)
+        public
+        view
+        returns (uint256[12] memory)
+    {
         require(
-        mapGamestate[msg.sender] != GameState.Inactive,
-        "Cannot reveal cards yet!"
+            mapGamestate[msg.sender] != GameState.Inactive,
+            "Cannot reveal cards yet!"
         );
 
         require(
@@ -218,8 +203,7 @@ contract BlackJack{
     }
 
     //Reveals only the first card of casino hand
-    function showCasinoFirstCard() public view returns (uint256){
-
+    function showCasinoFirstCard() public view returns (uint256) {
         require(
             mapGamestate[msg.sender] == GameState.Player_Turn,
             "Cannot reveal first card yet!"
@@ -229,11 +213,11 @@ contract BlackJack{
     }
 
     //UI can call this during reveal phase only
-    function getCasinoHand() public view returns (uint256[12] memory){
-
-
-        require(mapGamestate[msg.sender] == GameState.Reveal,
-        "Cannot reveal all the cards yet!");
+    function getCasinoHand() public view returns (uint256[12] memory) {
+        require(
+            mapGamestate[msg.sender] == GameState.Reveal,
+            "Cannot reveal all the cards yet!"
+        );
 
         uint256[12] memory returnData = mapCasino_card[msg.sender];
 
@@ -241,11 +225,11 @@ contract BlackJack{
     }
 
     //UI can call this during reveal phase only
-    function getGameDeck() public view returns (uint256[52] memory){
-
-
-        require(mapGamestate[msg.sender] == GameState.Reveal,
-        "Cannot reveal all the cards yet!");
+    function getGameDeck() public view returns (uint256[52] memory) {
+        require(
+            mapGamestate[msg.sender] == GameState.Reveal,
+            "Cannot reveal all the cards yet!"
+        );
 
         uint256[52] memory returnData = mapGameDeck[msg.sender];
 
@@ -253,8 +237,6 @@ contract BlackJack{
     }
 
     //END OF FRONTEND
-
-
 
     //PHASE ONE - INITIALIZE GAME
     function initializeGame() external payable {
@@ -315,23 +297,21 @@ contract BlackJack{
 
     //PHASE TWO - OPEN DECK
     // REVISIT! Need to accommodate for hash
-    function Casino_get_deck(address user, uint256[52] calldata shuffledCards, bytes32[52] calldata hashedCards) external{
-         require(
-            msg.sender == casino,
-            "Only casino can call this function"
-        );
+    function Casino_get_deck(
+        address user,
+        uint256[52] calldata shuffledCards,
+        bytes32[52] calldata hashedCards
+    ) external {
+        require(msg.sender == casino, "Only casino can call this function");
         require(
             mapGamestate[user] == GameState.Deck_shuffle,
             "Play needs to initilize the game"
-            );
-        
-     
+        );
+
         mapCasinoHash[user] = hashedCards;
         mapGamestate[user] = GameState.Car_Distribution;
         mapGameDeck[user] = shuffledCards; //NOTE: shuffled cards should  come from hash
     }
-
-
 
     //PHASE THREE - DISTRIBUTE CARD
     function distribute(address user) external {
@@ -379,23 +359,19 @@ contract BlackJack{
         mapGameDeckindex[user] += 1;
 
         //check if game already meet winning condition after inital card distrubution
-        if(Casino_check(user) == 21 && Player_check(user) == 21){
-          mapGamestate[user] = GameState.Reveal;
-        }
-        else if(Casino_check(user) == 21){
-          mapGamestate[user] = GameState.Reveal;
-        }
-        else if(Player_check(user) == 21){
-          mapGamestate[user] = GameState.Reveal;
-        }
-        else {
-          mapGamestate[user] = GameState.Player_Turn;
+        if (Casino_check(user) == 21 && Player_check(user) == 21) {
+            mapGamestate[user] = GameState.Reveal;
+        } else if (Casino_check(user) == 21) {
+            mapGamestate[user] = GameState.Reveal;
+        } else if (Player_check(user) == 21) {
+            mapGamestate[user] = GameState.Reveal;
+        } else {
+            mapGamestate[user] = GameState.Player_Turn;
         }
     }
 
     //PHASE FOUR - PLAYER TURN
     //Two options - hit or stand
-
 
     // Player Hit & Stand make up Phase 5
     // player draws a card
@@ -424,7 +400,6 @@ contract BlackJack{
         }
     }
 
-
     // Only for player
     function Stand() external {
         require(msg.sender != casino, "Only player can call this function");
@@ -435,11 +410,10 @@ contract BlackJack{
         mapGamestate[msg.sender] = GameState.Casino_Turn;
     }
 
-
     //PHASE FIVE - CASINO TURN
     //Casino will continue to hit until stop condition
 
-        // casino draws a card
+    // casino draws a card
     // casino only function
     function Casino_Hit(address player) private {
         require(
@@ -460,7 +434,7 @@ contract BlackJack{
         }
     }
 
-       // this is Phase 5
+    // this is Phase 5
     function Casino_Turn(address Player) external {
         require(
             msg.sender == casino,
@@ -479,56 +453,73 @@ contract BlackJack{
         mapRevealExpiration[Player] = block.timestamp;
     }
 
+    function CheckPlayerCasinoCard(address player, uint256 secretKey)
+        private
+        view
+        returns (bool)
+    {
+        uint256[] memory reconstructDeck = new uint256[](52);
 
-    function CheckPlayerCasinoCard(address player, uint256 secretKey) private view returns(bool){
-
-        uint256 [] memory reconstructDeck = new uint256[](52);
-
-        uint256 casinoHandIndex= 0;
-        uint256 playerHandIndex= 0;
+        uint256 casinoHandIndex = 0;
+        uint256 playerHandIndex = 0;
         uint256 reconstructIndex = 0;
 
-        reconstructDeck[reconstructIndex] = mapCasino_card[player][casinoHandIndex];
+        reconstructDeck[reconstructIndex] = mapCasino_card[player][
+            casinoHandIndex
+        ];
         reconstructIndex += 1;
         casinoHandIndex += 1;
 
-        reconstructDeck[reconstructIndex] = mapCasino_card[player][casinoHandIndex];
+        reconstructDeck[reconstructIndex] = mapCasino_card[player][
+            casinoHandIndex
+        ];
         reconstructIndex += 1;
         casinoHandIndex += 1;
 
-        reconstructDeck[reconstructIndex] = mapPlayer_card[player][playerHandIndex];
+        reconstructDeck[reconstructIndex] = mapPlayer_card[player][
+            playerHandIndex
+        ];
         reconstructIndex += 1;
         playerHandIndex += 1;
 
-        reconstructDeck[reconstructIndex] = mapCasino_card[player][playerHandIndex];
+        reconstructDeck[reconstructIndex] = mapPlayer_card[player][
+            playerHandIndex
+        ];
         reconstructIndex += 1;
         playerHandIndex += 1;
 
-        while (mapPlayer_card[player][playerHandIndex] != 100){
-            reconstructDeck[reconstructIndex] = mapPlayer_card[player][playerHandIndex];
+        while (mapPlayer_card[player][playerHandIndex] != 100) {
+            reconstructDeck[reconstructIndex] = mapPlayer_card[player][
+                playerHandIndex
+            ];
             reconstructIndex += 1;
             playerHandIndex += 1;
         }
 
-        while (mapCasino_card[player][casinoHandIndex] != 100){
-            reconstructDeck[reconstructIndex] = mapCasino_card[player][casinoHandIndex];
+        while (mapCasino_card[player][casinoHandIndex] != 100) {
+            reconstructDeck[reconstructIndex] = mapCasino_card[player][
+                casinoHandIndex
+            ];
             reconstructIndex += 1;
-            playerHandIndex += 1;
+            casinoHandIndex += 1;
         }
 
-        while(reconstructIndex != 52){
-            reconstructDeck[reconstructIndex] = mapGameDeck[player][reconstructIndex];
+        while (reconstructIndex != 52) {
+            reconstructDeck[reconstructIndex] = mapGameDeck[player][
+                reconstructIndex
+            ];
             reconstructIndex += 1;
         }
-        bytes32 [] memory reconstructDeckHash = new bytes32[](52);
-        
-        for (uint i = 0; i < 52; i++){
-            reconstructDeckHash[i] = keccak256(abi.encodePacked(uint256(secretKey),reconstructDeck[i]));
-        }
-        
-        for (uint i = 0; i < 52; i++){
+        bytes32[] memory reconstructDeckHash = new bytes32[](52);
 
-            if (reconstructDeckHash[i] != mapCasinoHash[player][i]){
+        for (uint256 i = 0; i < 52; i++) {
+            reconstructDeckHash[i] = keccak256(
+                abi.encodePacked(uint256(secretKey), reconstructDeck[i])
+            );
+        }
+
+        for (uint256 i = 0; i < 52; i++) {
+            if (reconstructDeckHash[i] != mapCasinoHash[player][i]) {
                 return false;
             }
         }
@@ -538,10 +529,10 @@ contract BlackJack{
         // uint256 count = 0;
         // if(mapCasino_card[player][0] != mapGameDeck[player][0] && mapCasino_card[player][1] != mapGameDeck[player][1]){
         //     return false;
-        // } 
+        // }
         // if(mapPlayer_card[player][0] != mapGameDeck[player][2] && mapPlayer_card[player][1] != mapGameDeck[player][3]){
         //     return false;
-        // } 
+        // }
         // count = 4;
         // for(uint256 i = 2; i < mapPlayer_card_num[player]; i++){
         //     if(mapPlayer_card[player][i] != mapGameDeck[player][count]){
@@ -556,7 +547,6 @@ contract BlackJack{
         //     count = count + 1;
         // }
         // return true;
-        
     }
 
     // This is phase 6
@@ -565,7 +555,7 @@ contract BlackJack{
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
-        require(CheckPlayerCasinoCard(player,secretKey),'Cheating Detect!!!');
+        require(CheckPlayerCasinoCard(player, secretKey), "Cheating Detect!!!");
         string memory won = "won";
         string memory lost = "lost";
         string memory push = "push";
@@ -586,9 +576,6 @@ contract BlackJack{
             Game_Pushed(payable(player));
         }
     }
-
-
-
 
     //check the total card value for player
     function Player_check(address player) private view returns (uint256) {
@@ -698,8 +685,6 @@ contract BlackJack{
         }
     }
 
-
-
     //Smart contract keep the money
     function Casino_Win(address player) private {
         mapGamestate[player] = GameState.Inactive;
@@ -723,8 +708,6 @@ contract BlackJack{
         mapBet[player] = 0;
     }
 
-
-
     receive() external payable {
         require(msg.data.length == 0);
     }
@@ -732,5 +715,4 @@ contract BlackJack{
     function getBetByKey(address _user) public view returns (uint256) {
         return mapBet[_user];
     }
-
 }
