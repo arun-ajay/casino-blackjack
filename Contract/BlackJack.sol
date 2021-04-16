@@ -675,5 +675,31 @@ contract BlackJack{
     function getBetByKey(address _user) public view returns (uint256) {
         return mapBet[_user];
     }
+    //for the front end
+    function set_winning(address player) public {
+        require(
+            mapGamestate[player] == GameState.Reveal,
+            "This user's game is not ready for the reveal phase"
+        );
+        string memory won = "won";
+        string memory lost = "lost";
+        string memory push = "push";
+        if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(won))
+        ) {
+            mapGameResult[player] = GameResult.Won;
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(lost))
+        ) {
+            mapGameResult[player] = GameResult.Lost;
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(push))
+        ) {
+            mapGameResult[player] = GameResult.Push;
+        }
+    }
 
 }
