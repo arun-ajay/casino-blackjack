@@ -539,7 +539,7 @@ contract BlackJack{
         for (uint256 i = 0; i < mapPlayer_card_num[player]; i++) {
             if (mapPlayer_card[player][i] % 13 == 0) {
                 continue;
-            } else if ((mapPlayer_card[player][i] % 13) > 10) {
+            } else if ((mapPlayer_card[player][i] % 13) >= 10) {
                 total += 10;
             } else {
                 total += ((mapPlayer_card[player][i] % 13) + 1);
@@ -581,7 +581,7 @@ contract BlackJack{
         for (uint256 i = 0; i < mapCasino_card_num[player]; i++) {
             if (mapCasino_card[player][i] % 13 == 0) {
                 continue;
-            } else if ((mapCasino_card[player][i] % 13) > 10) {
+            } else if ((mapCasino_card[player][i] % 13) >= 10) {
                 total += 10;
             } else {
                 total += ((mapCasino_card[player][i] % 13) + 1);
