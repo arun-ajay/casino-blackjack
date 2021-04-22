@@ -52,7 +52,7 @@ def phase3Response(activeGames):
         print("Distribute cards for user and dealer for address:",activeGame)
     gasPrice = w3.eth.generate_gas_price();
     gasEstimate = casinoContract.functions.distribute(activeGame).estimateGas()
-    response = casinoContract.functions.distribute(activeGame).transact({'from': account, 'to': activeGame, 'gasPrice': gasPrice})
+    response = casinoContract.functions.distribute(activeGame).transact({'from': myAddress, 'to': activeGame, 'gasPrice': gasPrice})
 
     print("Done")
 def phase3Bot():
