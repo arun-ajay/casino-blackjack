@@ -1,9 +1,9 @@
-import asyncio
+
 import time
-import threading
+
 from web3 import Web3
 import config
-from Crypto import Random
+
 
 w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
 smartContractAddress = Web3.toChecksumAddress(config.smartContractAddress)
@@ -26,6 +26,10 @@ def getPhase5Games():
 
 
 def phase5Response(activeGames):
+    if len(activeGames) > 0:
+        print("Detected the following games")
+        print(activeGames)
+
     for i in activeGames:
         activeGame = i
         print("Commiting casino actions...", activeGame)
@@ -39,5 +43,9 @@ def phase5Response(activeGames):
         print(response)
 
 
-phase5Response(getPhase5Games())
-print(getPhase5Games())
+while True:
+    print("Scanning games...")
+    print()
+    phase5Response(getPhase5Games())
+
+    time.sleep(5)
