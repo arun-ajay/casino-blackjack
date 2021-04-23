@@ -12,8 +12,8 @@ print(w3.isConnected())
 
 casinoContract = w3.eth.contract(address= smartContractAddress, abi= config.abi)
 accounts = w3.eth.account.privateKeyToAccount(config.casinoPrivateKey)
-myAddress = accounts.address
-account = w3.eth.accounts[0]
+account = accounts.address
+#account = w3.eth.accounts[0]
 #casino account
 print(accounts)
 
@@ -33,10 +33,7 @@ def openCard():
 
 def getPhase3Games():
     activeGames = []
-    temp = casinoContract.functions.getPhase3Games(myAddress).buildTransaction({
-    'gas': 70000,
-    'gasPrice': w3.toWei('1', 'gwei'),
-    }).call()
+    temp = casinoContract.functions.getPhase3Games().call()
     for i in range(len(temp)):
         if (temp[i] != '0x0000000000000000000000000000000000000000'):
            activeGames.append(temp[i])
@@ -52,8 +49,7 @@ def phase3Response(activeGames):
         print("Distribute cards for user and dealer for address:",activeGame)
     gasPrice = w3.eth.generate_gas_price();
     gasEstimate = casinoContract.functions.distribute(activeGame).estimateGas()
-    response = casinoContract.functions.distribute(activeGame).transact({'from': myAddress, 'to': activeGame, 'gasPrice': gasPrice})
-
+    response = casinoContract.functions.distribute(activeGame).transact({'from': account, 'to': activeGame, 'gasPrice': gasPrice})
     print("Done")
 def phase3Bot():
     activeGames = getPhase3Games()
