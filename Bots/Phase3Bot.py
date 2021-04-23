@@ -55,5 +55,6 @@ def phase3Response(activeGames):
 def phase3Bot():
     activeGames = getPhase3Games()
     print(activeGames)
-    phase3Response(activeGames)    
-phase3Bot()
+    phase3Response(activeGames)   
+while true:
+    phase3Bot()
