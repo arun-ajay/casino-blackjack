@@ -4,7 +4,7 @@ import random
 from web3.middleware import construct_sign_and_send_raw_middleware
 from eth_account import Account
 
-
+#test
 w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
 smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
 

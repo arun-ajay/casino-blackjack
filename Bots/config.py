@@ -464,6 +464,7 @@ abi = [
 	}
 ]
 
-infuraProvider = 'https://ropsten.infura.io/v3/2e8378c309f54f91a094f70e939c2245'
-casinoPrivateKey = 'ed62495f1062bd32daa6a2287e90b0e77f093d06a09036f37cb1a3711fe1e7a9'
-smartContractAddress = '0x38069e1c2c0101ed1aa6e8f568ef2242717d3000'
+
+infuraProvider = "https://ropsten.infura.io/v3/d9470ee99bd148a9ab9538871d5658cd"
+casinoPrivateKey = "5d39bf6982f7cfe0a4c3baa0eeea268033e68476f02eb27fb8c99dbf8b212335"
+smartContractAddress = "0x4bd1867B3dd0f56d7814aB94A5BA00bCa0b2e406"
