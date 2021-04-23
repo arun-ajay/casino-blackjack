@@ -1,25 +1,39 @@
+# from web3 import Web3
+# # from web3.auto.infura import w3
+# from web3.middleware import construct_sign_and_send_raw_middleware
+# import config
+# import random
+# # import threading
+# # import asyncio
+# import time
+
+
+# w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
+# print(w3.isConnected())
+# smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
+
+# casinoContract = w3.eth.contract(address= smartContractAddress, abi= config.abi)
+
+
 from web3 import Web3
-# from web3.auto.infura import w3
-from web3.middleware import construct_sign_and_send_raw_middleware
 import config
 import random
-# import threading
-# import asyncio
 import time
+# from web3.middleware import construct_sign_and_send_raw_middleware
+# from eth_account import Account
 
-
+#test
 w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
-print(w3.isConnected())
-smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
-
-casinoContract = w3.eth.contract(address= smartContractAddress, abi= config.abi)
 accounts = w3.eth.account.privateKeyToAccount(config.casinoPrivateKey)
 account = accounts.address
+print(account)
+smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
 
+#account = Account.from_key(config.casinoPrivateKey)
+#w3.middleware_onion.add(construct_sign_and_send_raw_middleware(account))
+#w3.eth.default_account = account.address
 
-
-print("Casino wallet",account)
-
+casinoContract = w3.eth.contract(address= smartContractAddress, abi= config.abi)
 def openCards():
        deck = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51]
        currentIndex = len(deck)
@@ -41,38 +55,26 @@ def getPhase2Games():
        
        return activeGames
 
-print("response",getPhase2Games())
 
 def phase2Response(activeGame):
 
-       print("\tProcessing game for {}".format(str(activeGame)))
+       #print("\tProcessing game for {}".format(str(activeGame)))
 
        freshDeck = openCards() #DB AND SERVER LOGIC COMES INTO PLAY
+       nonce = w3.eth.getTransactionCount(account)
+       transaction = casinoContract.functions.Casino_get_deck(activeGame,freshDeck).buildTransaction({
+              'nonce': nonce,
+              'from': account
+       })
+       #print(transaction)
+       # transaction.update({ 'nonce' : w3.eth.get_transaction_count('Your_Wallet_Address') })
+       signed_tx = w3.eth.account.sign_transaction(transaction, config.casinoPrivateKey)
+       print()
+       #print(signed_tx)
 
-       # gasPrice = w3.eth.generate_gas_price()
-       # print(account)
-
-       # gasEstimate = casinoContract.functions.Casino_get_deck(activeGame, freshDeck).estimateGas()
-
-       # print(gasPrice,gasEstimate)
-
-       # response = casinoContract.functions.Casino_get_deck(activeGame, freshDeck).transact({'gas': 42000, 'gasPrice': 21000})
-       # gasPrice = w3.eth.getGasPrice()
-       # gasEstimate = casinoContract.methods.Casino_Turn(activeGame).estimateGas({'from': account, 'to': activeGame})
-
-       # response = casinoContract.functions.Casino_get_deck.send({
-       #        'from': account, 'to': activeGame
-       # })
-       transaction = casinoContract.functions.Casino_get_deck(activeGame,freshDeck).buildTransaction({'from': account, 'to': activeGame, 'nonce': w3.eth.getTransactionCount(account)})
-       signedTx = w3.eth.account.signTransaction(transaction,config.casinoPrivateKey)
-       # print(signedTx.rawTransaction)
-       txhash = w3.eth.sendTransaction(signedTx)
-       #response = casinoContract.functions.Casino_get_deck(activeGame, freshDeck).transact({'to': activeGame})
-
-       print('Done!')
-       print(txhash)
-       # print(response)
-       print('')
+       response = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+       print(response)
+       # print('')
 
 
 
@@ -89,4 +91,5 @@ while True:
                      phase2Response(game)
 
        print()
+       break
        time.sleep(5)
