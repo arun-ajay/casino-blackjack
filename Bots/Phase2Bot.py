@@ -82,6 +82,7 @@ while True:
        print("Scanning games...")
        print()
        phase2Games = getPhase2Games()
+       print(phase2Games)
        if len(phase2Games) > 0:
               print("Games in phase 2 detected!")
               for game in phase2Games:
@@ -91,5 +92,4 @@ while True:
                      phase2Response(game)
 
        print()
-       break
        time.sleep(5)
