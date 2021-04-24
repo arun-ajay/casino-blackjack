@@ -49,7 +49,7 @@ contract BlackJack {
     //Keeps track of how many aces are in each hand
     mapping(address => uint256) private player_AceCount;
     mapping(address => uint256) private casino_AceCount;
-    
+
     //keeps track of hashed rCom
     mapping(address => string) private map_rCom;
 
@@ -303,7 +303,7 @@ contract BlackJack {
     function Casino_get_deck(
         address user,
         uint256[52] calldata shuffledCards,
-        string calldata rCom
+        string calldata hashed_rCom
     ) external {
         require(msg.sender == casino, "Only casino can call this function");
         require(
@@ -311,7 +311,7 @@ contract BlackJack {
             "Play needs to initilize the game"
         );
 
-        map_rCom[user] = rCom;
+        map_rCom[user] = hashed_rCom;
         mapGamestate[user] = GameState.Car_Distribution;
         mapGameDeck[user] = shuffledCards; //NOTE: shuffled cards should  come from hash
     }
