@@ -374,4 +374,4 @@ abi = [
 
 infuraProvider = "https://ropsten.infura.io/v3/d9470ee99bd148a9ab9538871d5658cd"
 casinoPrivateKey = "5d39bf6982f7cfe0a4c3baa0eeea268033e68476f02eb27fb8c99dbf8b212335"
-smartContractAddress = "0x2CE551a2d23886b038D5aA2e6eaFb503eF2dD6DB"
+smartContractAddress = "0x823FeA2067D2bDa575a21A0916DFe0bA9019e83d"
