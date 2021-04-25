@@ -10,7 +10,8 @@ contract BlackJack {
         Car_Distribution,
         Player_Turn,
         Casino_Turn,
-        Reveal
+        Reveal,
+        Clear
     }
 
     //Generic description of game result
@@ -49,7 +50,7 @@ contract BlackJack {
     //Keeps track of how many aces are in each hand
     mapping(address => uint256) private player_AceCount;
     mapping(address => uint256) private casino_AceCount;
-
+    
     //keeps track of hashed rCom
     mapping(address => string) private map_rCom;
 
@@ -456,11 +457,62 @@ contract BlackJack {
         mapRevealExpiration[Player] = block.timestamp;
     }
 
-    function CheckPlayerCasinoCard(address player, uint256 secretKey)
+    function BinaryToDecimal (uint256 binary) private view returns (uint256) {
+        uint256 decimal = 0;
+        uint256 n = 0;
+        while (true) {
+            if (binary == 0) {
+                break;
+            } else {
+                uint256 temp = binary % 10;
+                decimal += temp*2**n;
+                binary = binary/10;
+                n++;
+            }
+        }
+        return decimal;
+    }
+    
+    
+    function CheckPlayerCasinoCard(address player, string memory rCom, string memory rP)
         private
         view
         returns (bool)
-    {
+    {   
+        
+        uint256[] memory array_Binary = new uint256[](312);
+        uint256 rCount = 0;
+        while (rCount < 313) {
+            if(keccak256(abi.encodePacked(bytes(rCom)[rCount])) ==
+            keccak256(abi.encodePacked(bytes(rP)[rCount]))) {
+                array_Binary[rCount] = 0;
+            } else {
+                array_Binary[rCount] = 1;
+            }
+        }
+        
+        
+        
+        //slice the 312 digits number in term of 6. should have 312/6=52 
+        //We will store 52 binary number into array_Slice
+        //For Example: [0 ,1 ,1, 1, 0 ,1] => [011101]
+        uint256 slice_Index = 0;
+        uint256[] memory array_Slice = new uint256[](52);
+        for (uint256 i = 0; i < 313; i = i + 6) {
+            uint temp1 = 0;
+            for (uint256 j = i; j < i + 6; j++) {
+                temp1 = 10 * temp1 + array_Binary[j]; 
+            }
+            array_Slice[slice_Index] = temp1;
+            slice_Index++;
+        }
+        
+        uint256[] memory array_Random = new uint256[](52);
+        
+        for (uint256 i = 0; i < 52; i++) {
+            array_Random[i] = BinaryToDecimal(array_Slice[i]);
+        }
+        
         uint256[] memory reconstructDeck = new uint256[](52);
 
         uint256 casinoHandIndex = 0;
@@ -513,52 +565,48 @@ contract BlackJack {
             ];
             reconstructIndex += 1;
         }
-        bytes32[] memory reconstructDeckHash = new bytes32[](52);
-
-        for (uint256 i = 0; i < 52; i++) {
-            reconstructDeckHash[i] = keccak256(
-                abi.encodePacked(uint256(secretKey), reconstructDeck[i])
-            );
+        
+        uint[52] memory newDeck = [uint(0), 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
+        
+        uint256 count = 0;
+        uint256 currentIndex = 51;
+        //shuffle the newDeck with Fisher-Yates Algorithm using the random Index that we got from rFy above
+        while (currentIndex != 0) {
+            uint256 randomIndex = array_Random[count];
+            currentIndex = currentIndex - 1;
+            uint256 temporaryValue = newDeck[count];
+            newDeck[currentIndex] = newDeck[randomIndex];
+            newDeck[randomIndex] = temporaryValue;
         }
-
-        for (uint256 i = 0; i < 52; i++) {
-            if (reconstructDeckHash[i] != mapCasinoHash[player][i]) {
-                return false;
+        
+        uint256 newCount = 0;
+        while (newCount < 52) {
+            if (reconstructDeck[newCount] != newDeck[newCount]) {
+                return false; 
             }
         }
-
         return true;
-
-        // uint256 count = 0;
-        // if(mapCasino_card[player][0] != mapGameDeck[player][0] && mapCasino_card[player][1] != mapGameDeck[player][1]){
-        //     return false;
-        // }
-        // if(mapPlayer_card[player][0] != mapGameDeck[player][2] && mapPlayer_card[player][1] != mapGameDeck[player][3]){
-        //     return false;
-        // }
-        // count = 4;
-        // for(uint256 i = 2; i < mapPlayer_card_num[player]; i++){
-        //     if(mapPlayer_card[player][i] != mapGameDeck[player][count]){
-        //         return false;
-        //     }
-        //     count = count + 1;
-        // }
-        // for(uint256 j = 2; j < mapCasino_card_num[player]; j++){
-        //     if(mapCasino_card[player][j] != mapGameDeck[player][count]){
-        //         return false;
-        //     }
-        //     count = count + 1;
-        // }
-        // return true;
+       
     }
 
     // This is phase 6
-    function Payout(address player, uint256 secretKey) public {
+    function Payout(address player, string memory rCom, string memory rP) public {
         require(
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
-        require(CheckPlayerCasinoCard(player, secretKey), "Cheating Detect!!!");
+        
+        require(keccak256(abi.encodePacked(keccak256(abi.encodePacked(rCom)))) ==
+            keccak256(abi.encodePacked(map_rCom[player])), "rCom doesn't match");
+        
+        require(CheckPlayerCasinoCard(player, rCom, rP) == true, "Cards' order don't match, cheating detected!");
+        //take first 312 bits of rCom convert it into int, convert rP into int as well
+        //XOR with rP to get rFy, convert rFy to array of indexes
+        
+        //construct a new deck & use the array of indexes above to shuffle it 
+        
+        //finally compare the reconstructed Deck with the newly shuffled deck
+        
         string memory won = "won";
         string memory lost = "lost";
         string memory push = "push";
@@ -575,7 +623,7 @@ contract BlackJack {
         } else if (
             keccak256(abi.encodePacked(compare(player))) ==
             keccak256(abi.encodePacked(push))
-        ) {
+        ) { 
             Game_Pushed(payable(player));
         }
     }
@@ -690,14 +738,14 @@ contract BlackJack {
 
     //Smart contract keep the money
     function Casino_Win(address player) private {
-        mapGamestate[player] = GameState.Inactive;
+        mapGamestate[player] = GameState.Clear;
         mapGameResult[player] = GameResult.Lost;
         mapBet[player] = 0;
     }
 
     //Smart contract transfer the money to the player
     function Player_Win(address payable player) private {
-        mapGamestate[player] = GameState.Inactive;
+        mapGamestate[player] = GameState.Clear;
         mapGameResult[player] = GameResult.Won;
         payable(player).transfer(mapBet[player] * 2);
         mapBet[player] = 0;
@@ -705,10 +753,22 @@ contract BlackJack {
 
     //Smart contract returns the player's betting
     function Game_Pushed(address payable player) private {
-        mapGamestate[player] = GameState.Inactive;
+        mapGamestate[player] = GameState.Clear;
         mapGameResult[player] = GameResult.Push;
         payable(player).transfer(mapBet[player]);
         mapBet[player] = 0;
+    }
+    
+    //allow casino to change game state from Clear to Inactive
+    function Clear_Game(address player) private {
+        require(msg.sender == casino,
+            "This function is only for casinos to use."
+        );
+        require(
+            mapGamestate[player] == GameState.Clear,
+            "You can only make game Inactive when it's at Clear state."
+        );
+        mapGamestate[player] = GameState.Inactive;
     }
 
     receive() external payable {
