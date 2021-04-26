@@ -73,6 +73,24 @@ const GameContainer=(Props)=> {
 
        }
 
+       const randomDigit=()=> {
+              return Math.floor(Math.random() * Math.floor(2));
+       }
+            
+       const generateRandomBinary=(binaryLength)=> {
+              let binary = "0b";
+              for(let i = 0; i < binaryLength; ++i) {
+                binary += randomDigit();
+              }
+
+              binary = binary.substring(binary.indexOf("b")+1);
+
+              return binary;
+       }
+       console.log(generateRandomBinary(312))
+            
+       
+
        const hit= async ()=>{
               console.log('Hitting...')
               setUserAlert('Hitting...')
