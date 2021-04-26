@@ -52,7 +52,7 @@ def sendrp():
             jsonData = request.json
             address = jsonData["address"]
             rp = jsonData["rp"]
-            connection = sqlite3.connect(r"./blackjack.db")
+            connection = sqlite3.connect("blackjack.db")
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(address,))
 
@@ -103,7 +103,7 @@ def getHash():
         try:
             jsonData = request.json
             address = jsonData["address"]
-            connection = sqlite3.connect(r"./blackjack.db")
+            connection = sqlite3.connect("blackjack.db")
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(address,))
 
@@ -143,13 +143,14 @@ def getrcom():
         try:
             jsonData = request.json
             address = jsonData["address"]
-            connection = sqlite3.connect(r"./blackjack.db")
+            connection = sqlite3.connect("blackjack.db")
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(address,))
 
             gameState = getGameState(address)
+            print(gameState)
 
-            if gameState != 5 or gameState !=6:
+            if gameState != 5:
                 body = {
                     "Message": "You are not allowed to receive the casino's private key yet!"
                 }
@@ -164,7 +165,7 @@ def getrcom():
                     return jsonify(body),400
                 else:
                     body = {
-                        "rcom": db[1] #Fourth Column is Hash
+                        "rcom": dbData[1] #Fourth Column is Hash
                     }
                     return jsonify(body),200
 
