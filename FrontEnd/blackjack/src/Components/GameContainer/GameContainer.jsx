@@ -13,6 +13,7 @@ import Loader from 'react-loader-spinner'
 import Modal from '../Modal/Modal'
 import {casinoAbi} from '../../Abis/casinoAbi'
 import {smartContractAddress} from '../../Config/config'
+import {getrcom, sendrp, gethash} from '../../Utils/api'
 
 const GameContainer=(Props)=> {
 
@@ -34,6 +35,8 @@ const GameContainer=(Props)=> {
 
        const [dealerCards, setDealerCards]= useState([])
        const [dealerScore, setDealerScore]= useState(0)
+
+       const [rP, setRP]=useState('')
 
        const [balance, setBalance]= useState(100)
        const [bet, setBet]= useState(0)
@@ -85,9 +88,46 @@ const GameContainer=(Props)=> {
 
               binary = binary.substring(binary.indexOf("b")+1);
 
+              setRP(binary)
               return binary;
        }
-       console.log(generateRandomBinary(312))
+
+       const getRCOM = (userAddress)=>{
+              //address should be string
+              let body = {"address":userAddress}
+
+              getrcom(body)
+              .then((response)=>{
+                     console.log(response.data.rcom)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })    
+       }
+       
+       const sendRP=(userAddress, rP)=>{
+              let body = {"address":userAddress, "rp": rP }
+
+              sendrp(body)
+              .then((response)=>{
+                     console.log(response)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })
+       }
+
+       const getHASH=(userAddress)=>{
+              let body = {"address":userAddress}
+
+              gethash(body)
+              .then((response)=>{
+                     console.log(response)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })
+       }
             
        
 
@@ -225,6 +265,7 @@ const GameContainer=(Props)=> {
        //PHASE ONE - initialize game
        const initiatePhaseOne= async (bet)=>{
               setUserAlert('Submitting your bet...')
+              generateRandomBinary(312)
               // setLoading(true)
               console.log('BEGIN PHASE ONE...')
               // setGameResult('')

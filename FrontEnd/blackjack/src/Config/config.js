@@ -1,1 +1,1 @@
-export const smartContractAddress = '0x89ac09d3edeb174217589485d518f1ea8be0d110'
+export const smartContractAddress = '0x5f3c41c93203b1f1955120471f928a44e6ef4d07'
