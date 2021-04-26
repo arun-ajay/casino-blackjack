@@ -14,11 +14,10 @@ import asyncio
 w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
 accounts = w3.eth.account.privateKeyToAccount(config.casinoPrivateKey)
 account = accounts.address
-print(account)
 smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
 
 casinoContract = w3.eth.contract(address= smartContractAddress, abi= config.abi)
-
+nonce = w3.eth.getTransactionCount(account) + 400
 # ----- END OF WEB3.PY SETUP ----- #
 
 
@@ -71,7 +70,7 @@ def sendrp():
                         "Message": "Your hash isn't ready yet!"
                     }
                     return jsonify(body),400
-                elif len(dbData[4]) == 0:
+                elif len(dbData[4]) != 0:
                     body = {
                         "Message": "You have already sent us your rp."
                     }
@@ -79,9 +78,10 @@ def sendrp():
                 else:
                     dbData = list(dbData)
                     dbData[4] = rp
-                    cursor.execute("DELETE FROM GAMEDATA WHERE ADR = ?",(address))
+                    cursor.execute("DELETE FROM GAMEDATA WHERE [ADR] = ?",(address,))
                     connection.commit()
-                    cursor.execute("INSERT INTO GAMEDATA (ADR,RCOM,RD,HASH,RP) ?,?,?,?,?", tuple(dbData))
+                    cursor.execute("INSERT INTO GAMEDATA VALUES(?,?,?,?,?)", tuple(dbData))
+                    connection.commit()
                     body = {
                         "Message": "We've received your rp!"
                     }
@@ -123,7 +123,7 @@ def getHash():
                     return jsonify(body),400
                 else:
                     body = {
-                        "hash": db[3] #Fourth Column is Hash
+                        "hash": dbData[3] #Fourth Column is Hash
                     }
                     return jsonify(body),200
 
