@@ -1,4 +1,3 @@
-
 from web3 import Web3
 import config
 import random
@@ -9,17 +8,8 @@ from Crypto.Random import random
 
 def generateRandomNumberWithHash():
        rComNum = random.getrandbits(512) #int
-       rCom = bin(rComNum).split('b')[1] #string
-       rComHash = str(Web3.keccak(text=rCom))
-
-       hashBuild = []
-       for index,char in enumerate(rComHash):
-              if index == 0 or index == 1 or index == (len(rComHash) - 1):
-                     continue
-              else:
-                     hashBuild.append(char)
-       
-       rComHash = "".join(hashBuild)
+       rCom = bin(rComNum).split('b')[1] #string 
+       rComHashByte32 = Web3.soliditySha3(["string"],[rCom]).hex()
        rDBinaryList = []
        rd = ""
        for index,char in enumerate(rCom):
@@ -30,7 +20,7 @@ def generateRandomNumberWithHash():
                      rDBinaryList.append(char)
        return {
               "rCom": rCom,
-              "hash": rComHash,
+              "hash": rComHashByte32,
               "rD": rd
        }
                      
@@ -111,7 +101,8 @@ async def phase2Response(activeGame,nonce):
                                    num = int(binaryNumber,2)
                                    shuffleList.append(num%52)
                             
-
+                            print(rComHash)
+                            print(type(rComHash))
 
                             shuffledDeck = shuffleCards(shuffleList)
 
@@ -145,4 +136,4 @@ while True:
                      asyncio.run(phase2Response(game,nonce))
                      nonce += 1
 
-       time.sleep(5)
+       time.sleep(10)
