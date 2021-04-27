@@ -18,7 +18,7 @@ contract BlackJack {
     enum GameResult {None, InProgress, Won, Lost, Push}
 
     //Player Hand
-    mapping(address => uint256[12]) public mapPlayer_card;
+    mapping(address => uint256[12]) private mapPlayer_card;
     //Casino Hand
     mapping(address => uint256[12]) private mapCasino_card;
 
@@ -31,8 +31,8 @@ contract BlackJack {
     //of our deck via indexes
     mapping(address => uint256) private mapGameDeckindex;
 
-    //The hash of the game deck per player
-    mapping(address => bytes32[52]) public mapCasinoHash;
+    // //The hash of the game deck per player
+    // mapping(address => bytes32[52]) public mapCasinoHash;
 
     //Keeps track of deck for each game per user address
     mapping(address => uint256[52]) private mapGameDeck;
@@ -52,7 +52,7 @@ contract BlackJack {
     mapping(address => uint256) private casino_AceCount;
     
     //keeps track of hashed rCom
-    mapping(address => string) private map_rCom;
+    mapping(address => bytes32) public map_rCom;
 
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
@@ -175,6 +175,33 @@ contract BlackJack {
     //END OF BACKEND
 
     //FOR FRONTEND - React
+    
+    function check_winning(address player) public {
+        require(
+            mapGamestate[player] == GameState.Reveal,
+            "This user's game is not ready for the reveal phase"
+        );
+        string memory won = "won";
+        string memory lost = "lost";
+        string memory push = "push";
+        if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(won))
+        ) {
+            mapGameResult[player] = GameResult.Won;
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(lost))
+        ) {
+            mapGameResult[player] = GameResult.Lost;
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(push))
+        ) {
+            mapGameResult[player] = GameResult.Push;
+        }
+    }
+
 
     //Always reveal the player hand
     function getPlayerHand(address user)
@@ -304,7 +331,7 @@ contract BlackJack {
     function Casino_get_deck(
         address user,
         uint256[52] calldata shuffledCards,
-        string calldata hashed_rCom
+        bytes32  hashed_rCom
     ) external {
         require(msg.sender == casino, "Only casino can call this function");
         require(
@@ -380,7 +407,7 @@ contract BlackJack {
     // Player Hit & Stand make up Phase 5
     // player draws a card
     // player only function
-    function Player_Hit(address Player) external {
+    function Player_Hit(address player) external {
         require(msg.sender != casino, "Only player can call this function");
         require(
             mapGamestate[msg.sender] == GameState.Player_Turn,
@@ -401,7 +428,7 @@ contract BlackJack {
 
         if (Player_check(msg.sender) > 21) {
             mapGamestate[msg.sender] = GameState.Reveal;
-            check_winning(Player);
+            check_winning(player);
         }
     }
 
@@ -597,8 +624,7 @@ contract BlackJack {
             "This user's game is not ready for the reveal phase"
         );
         
-        require(keccak256(abi.encodePacked(keccak256(abi.encodePacked(rCom)))) ==
-            keccak256(abi.encodePacked(map_rCom[player])), "rCom doesn't match");
+        require((keccak256(abi.encodePacked(rCom))) == map_rCom[player], "rCom doesn't match");
         
         require(CheckPlayerCasinoCard(player, rCom, rP) == true, "Cards' order don't match, cheating detected!");
         //take first 312 bits of rCom convert it into int, convert rP into int as well
