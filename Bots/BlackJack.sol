@@ -485,20 +485,24 @@ contract BlackJack {
         mapRevealExpiration[Player] = block.timestamp;
     }
 
-    function BinaryToDecimal (uint256 binary) private view returns (uint256) {
-        uint256 decimal = 0;
-        uint256 n = 0;
-        while (true) {
-            if (binary == 0) {
-                break;
-            } else {
-                uint256 temp = binary % 10;
-                decimal += temp*2**n;
-                binary = binary/10;
-                n++;
+    function get_random_nums(uint256[] memory array_Binary) pure private returns(uint256[] memory){
+        
+        uint256 slice_Index = 0;
+        uint256 temp1 = 5;
+        uint256 num = 0;
+        uint256[] memory array_Random = new uint256[](52);
+        for (uint256 i = 0; i < 312; i = i + 6) {
+                for (uint256 j = i; j < i + 6; j++) {
+                    num += 2 ** temp1 * array_Binary[j]; 
+                    temp1 --;
+                }
+                array_Random[slice_Index] = num;
+                slice_Index += 1;
+                temp1 = 5;
+                num = 0;
             }
-        }
-        return decimal;
+        return array_Random;
+        
     }
     
     
@@ -525,22 +529,8 @@ contract BlackJack {
         //slice the 312 digits number in term of 6. should have 312/6=52 
         //We will store 52 binary number into array_Slice
         //For Example: [0 ,1 ,1, 1, 0 ,1] => [011101]
-        uint256 slice_Index = 0;
-        uint256[] memory array_Slice = new uint256[](52);
-        for (uint256 i = 0; i < 313; i = i + 6) {
-            uint temp1 = 0;
-            for (uint256 j = i; j < i + 6; j++) {
-                temp1 = 10 * temp1 + array_Binary[j]; 
-            }
-            array_Slice[slice_Index] = temp1;
-            slice_Index += 1;
-        }
-        
         uint256[] memory array_Random = new uint256[](52);
-        
-        for (uint256 i = 0; i < 52; i++) {
-            array_Random[i] = BinaryToDecimal(array_Slice[i]);
-        }
+        array_Random = get_random_nums(array_Binary);
         
         uint256[] memory reconstructDeck = new uint256[](52);
 
