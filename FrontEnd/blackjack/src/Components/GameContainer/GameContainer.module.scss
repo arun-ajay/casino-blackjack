@@ -33,9 +33,24 @@ border-top-left-radius: 15px;
 
 .grantMetaMaskButton{
        height: 50px;
-       border: none;
+       border: 2.5px solid rgb(32, 27, 61);
+       border-radius: 15px;
+       font-size: 18px;
        margin-bottom: 15px;
+       padding-left: 10px;
+       padding-right: 10px;
+       color: white;
+       background-color: rgba(255, 255, 255, 0);
+       cursor: pointer;
 }
+
+.grantMetaMaskButton:hover{
+       background-color: rgba(255, 255, 255, 0.137);
+}
+.grantMetaMaskButton:focus{
+       outline: none;
+}
+
 
 .initBody{
        display: flex;

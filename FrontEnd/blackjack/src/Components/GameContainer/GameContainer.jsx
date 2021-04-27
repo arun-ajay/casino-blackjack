@@ -135,7 +135,7 @@ const GameContainer=(Props)=> {
               console.log('Hitting...')
               setUserAlert('Hitting...')
               try{
-                     await casinoContract.methods.Player_Hit().send({from: userAddress, to: casinoContractAddress})
+                     await casinoContract.methods.Player_Hit(userAddress).send({from: userAddress, to: casinoContractAddress})
                      console.log("Sucessfully hit.")
                      getNewCard()
               }catch(error){
@@ -461,7 +461,7 @@ const GameContainer=(Props)=> {
                                                  {(gameResult != '')?<Prompt message={gameResult}/>: null}
 
                                                  {(userAlert && userAlert != 'Choose again')?<div id={styles.userAlert}>
-                                                        <Loader type="Oval" color="#00BFFF" height={35} width ={35} />
+                                                        {(userAlert != 'Bet submission cancelled. Please resubmit your bet.')?<Loader type="Oval" color="#00BFFF" height={35} width ={35} />:null}
                                                         <Prompt message={userAlert}/>
                                                  </div>:<Prompt message={userAlert}/>}
 
