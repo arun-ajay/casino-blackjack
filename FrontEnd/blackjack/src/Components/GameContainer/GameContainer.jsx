@@ -13,6 +13,7 @@ import Loader from 'react-loader-spinner'
 import Modal from '../Modal/Modal'
 import {casinoAbi} from '../../Abis/casinoAbi'
 import {smartContractAddress} from '../../Config/config'
+import {getrcom, sendrp, gethash} from '../../Utils/api'
 
 const GameContainer=(Props)=> {
 
@@ -34,6 +35,8 @@ const GameContainer=(Props)=> {
 
        const [dealerCards, setDealerCards]= useState([])
        const [dealerScore, setDealerScore]= useState(0)
+
+       const [rP, setRP]=useState('')
 
        const [balance, setBalance]= useState(100)
        const [bet, setBet]= useState(0)
@@ -73,11 +76,66 @@ const GameContainer=(Props)=> {
 
        }
 
+       const randomDigit=()=> {
+              return Math.floor(Math.random() * Math.floor(2));
+       }
+            
+       const generateRandomBinary=(binaryLength)=> {
+              let binary = "0b";
+              for(let i = 0; i < binaryLength; ++i) {
+                binary += randomDigit();
+              }
+
+              binary = binary.substring(binary.indexOf("b")+1);
+
+              setRP(binary)
+              return binary;
+       }
+
+       const getRCOM = (userAddress)=>{
+              //address should be string
+              let body = {"address":userAddress}
+
+              getrcom(body)
+              .then((response)=>{
+                     console.log(response.data.rcom)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })    
+       }
+       
+       const sendRP=(userAddress, rP)=>{
+              let body = {"address":userAddress, "rp": rP }
+
+              sendrp(body)
+              .then((response)=>{
+                     console.log(response)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })
+       }
+
+       const getHASH=(userAddress)=>{
+              let body = {"address":userAddress}
+
+              gethash(body)
+              .then((response)=>{
+                     console.log(response)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })
+       }
+            
+       
+
        const hit= async ()=>{
               console.log('Hitting...')
               setUserAlert('Hitting...')
               try{
-                     await casinoContract.methods.Player_Hit(userAddress).send({from: userAddress, to: casinoContractAddress})
+                     await casinoContract.methods.Player_Hit().send({from: userAddress, to: casinoContractAddress})
                      console.log("Sucessfully hit.")
                      getNewCard()
               }catch(error){
@@ -207,22 +265,17 @@ const GameContainer=(Props)=> {
        //PHASE ONE - initialize game
        const initiatePhaseOne= async (bet)=>{
               setUserAlert('Submitting your bet...')
-              // setLoading(true)
+              generateRandomBinary(312)
               console.log('BEGIN PHASE ONE...')
-              // setGameResult('')
-              // setStatusMessage('Awaiting transaction confirmation...')
-              // setDeniedMessage('')
               try{
                      await casinoContract.methods.initializeGame().send({from: userAddress, to: casinoContractAddress, value: web3.utils.toWei(bet.toString())})
+                     sendRP(userAddress, rP)
                      console.log('initialized game - PHASE ONE, CLEAR.')
                      toggleShowBetInput()
                      setUserAlert('Casino is shuffling cards and distributing them...')
-                     // setStatusMessage('Waiting for casino choice, hang tight :)')
               } catch (error){
-                     // setLoading(false)
                      if (error.code === 4001){
                             setUserAlert('Bet submission cancelled. Please resubmit your bet.')
-                            // setDeniedMessage(`You've denied the transaction.`)
                      }
                      console.log(error.message)
               }

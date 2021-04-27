@@ -41,7 +41,7 @@ accounts = w3.eth.account.privateKeyToAccount(config.casinoPrivateKey)
 account = accounts.address
 smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
 casinoContract = w3.eth.contract(address= smartContractAddress, abi= config.abi)
-connection = sqlite3.connect(r"./blackjack.db")
+connection = sqlite3.connect("blackjack.db")
 cursor = connection.cursor()
 
 def shuffleCards(shuffleArray):

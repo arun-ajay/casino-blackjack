@@ -1,13 +1,47 @@
-import React, {useState} from 'react'
-import DealerHand from '../src/Components/DealerHand/DealerHand'
-import UserHand from '../src/Components/UserHand/UserHand'
-import Prompt from '../src/Components/Prompt//Prompt'
-import Card from '../src/Components/Card/Card'
-import Controls from '../src/Components/Controls/Controls'
+import React from 'react'
 import GameContainer from '../src/Components/GameContainer/GameContainer'
 import styles from '../src/App.module.scss'
+import {getrcom, sendrp, gethash} from '../src/Utils/api'
 
 function App() {
+              
+       const getRCOM = (userAddress)=>{
+              //address should be string
+              let body = {"address":userAddress}
+
+              getrcom(body)
+              .then((response)=>{
+                     console.log(response.data.rcom)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })    
+       }
+       
+       const sendRP=(userAddress, rP)=>{
+              let body = {"address":userAddress, "rp": rP }
+
+              sendrp(body)
+              .then((response)=>{
+                     console.log(response)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })
+       }
+
+       const getHASH=(userAddress)=>{
+              let body = {"address":userAddress}
+
+              gethash(body)
+              .then((response)=>{
+                     console.log(response)
+              })
+              .catch((error)=>{
+                     console.log(error)
+              })
+       }
+
 
   return (
          <div className={styles.App}>
