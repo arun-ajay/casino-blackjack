@@ -524,11 +524,9 @@ contract BlackJack {
             rCount += 1;
         }
         
-        
-        
         //slice the 312 digits number in term of 6. should have 312/6=52 
-        //We will store 52 binary number into array_Slice
-        //For Example: [0 ,1 ,1, 1, 0 ,1] => [011101]
+        //we will generate decimal in group of 6
+        //For Example: [0 ,1 ,1, 1, 0 ,1] => 29
         uint256[] memory array_Random = new uint256[](52);
         array_Random = get_random_nums(array_Binary);
         
