@@ -135,7 +135,7 @@ const GameContainer=(Props)=> {
               console.log('Hitting...')
               setUserAlert('Hitting...')
               try{
-                     await casinoContract.methods.Player_Hit(userAddress).send({from: userAddress, to: casinoContractAddress})
+                     await casinoContract.methods.Player_Hit().send({from: userAddress, to: casinoContractAddress})
                      console.log("Sucessfully hit.")
                      getNewCard()
               }catch(error){
@@ -266,22 +266,16 @@ const GameContainer=(Props)=> {
        const initiatePhaseOne= async (bet)=>{
               setUserAlert('Submitting your bet...')
               generateRandomBinary(312)
-              // setLoading(true)
               console.log('BEGIN PHASE ONE...')
-              // setGameResult('')
-              // setStatusMessage('Awaiting transaction confirmation...')
-              // setDeniedMessage('')
               try{
                      await casinoContract.methods.initializeGame().send({from: userAddress, to: casinoContractAddress, value: web3.utils.toWei(bet.toString())})
+                     sendRP(userAddress, rP)
                      console.log('initialized game - PHASE ONE, CLEAR.')
                      toggleShowBetInput()
                      setUserAlert('Casino is shuffling cards and distributing them...')
-                     // setStatusMessage('Waiting for casino choice, hang tight :)')
               } catch (error){
-                     // setLoading(false)
                      if (error.code === 4001){
                             setUserAlert('Bet submission cancelled. Please resubmit your bet.')
-                            // setDeniedMessage(`You've denied the transaction.`)
                      }
                      console.log(error.message)
               }

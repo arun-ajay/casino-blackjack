@@ -18,7 +18,7 @@ contract BlackJack {
     enum GameResult {None, InProgress, Won, Lost, Push}
 
     //Player Hand
-    mapping(address => uint256[12]) private mapPlayer_card;
+    mapping(address => uint256[12]) public mapPlayer_card;
     //Casino Hand
     mapping(address => uint256[12]) private mapCasino_card;
 
@@ -380,7 +380,7 @@ contract BlackJack {
     // Player Hit & Stand make up Phase 5
     // player draws a card
     // player only function
-    function Player_Hit() external {
+    function Player_Hit(address Player) external {
         require(msg.sender != casino, "Only player can call this function");
         require(
             mapGamestate[msg.sender] == GameState.Player_Turn,
@@ -401,6 +401,7 @@ contract BlackJack {
 
         if (Player_check(msg.sender) > 21) {
             mapGamestate[msg.sender] = GameState.Reveal;
+            check_winning(Player);
         }
     }
 
