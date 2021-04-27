@@ -122,8 +122,18 @@ def getHash():
                     }
                     return jsonify(body),400
                 else:
+                    hashData = dbData[3]
+                    hashData = str(hashData)
+                    hashBuild = []
+                    for index,char in enumerate(hashData):
+                            if index == 0 or index == 1 or index == (len(hashData) - 1):
+                                    continue
+                            else:
+                                    hashBuild.append(char)
+                    rComHash = "".join(hashBuild)
+
                     body = {
-                        "hash": dbData[3] #Fourth Column is Hash
+                        "hash": rComHash #Fourth Column is Hash
                     }
                     return jsonify(body),200
 

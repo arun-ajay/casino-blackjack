@@ -9,9 +9,9 @@ from Crypto.Random import random
 
 def generateRandomNumberWithHash():
        rComNum = random.getrandbits(512) #int
-       rCom = bin(rComNum).split('b')[1] #string
-       rComHash = str(Web3.keccak(text=rCom))
-
+       rCom = bin(rComNum).split('b')[1] #string 
+       rComHashByte32 = Web3.soliditySha3(["string"],[rCom])
+       rComHash = str(rComHashByte32)
        hashBuild = []
        for index,char in enumerate(rComHash):
               if index == 0 or index == 1 or index == (len(rComHash) - 1):
@@ -30,7 +30,7 @@ def generateRandomNumberWithHash():
                      rDBinaryList.append(char)
        return {
               "rCom": rCom,
-              "hash": rComHash,
+              "hash": rComHashByte32,
               "rD": rd
        }
                      
@@ -145,4 +145,4 @@ while True:
                      asyncio.run(phase2Response(game,nonce))
                      nonce += 1
 
-       time.sleep(5)
+       time.sleep(10)
