@@ -1,23 +1,152 @@
 pragma solidity 0.6.6;
 
-contract test {
-    mapping(address => bytes32) public mapBytes32;
-    mapping(address => string) public mapString;
+contract Coinflip {
+    mapping(address => uint256[]) public mapInt1;
+    mapping(address => uint256[]) public mapInt2;
 
     constructor() public {}
 
-    function casinoCommit() external {
-        mapBytes32[msg.sender] = keccak256(
-            abi.encodePacked(
-                string(
-                    "1111110010111100100001001001000111111110111001101001111001101110010001011110010000100011001110110101011001000000111001011110111110000011101011000011111110011111101011000010011101000101011110000101001101001111010101111110100110011110110011011111010100010110011001011101110100111100110001111001000101110011110000111110000111111001100111101001010001100001110011101110010011000101100000100000010000011000110001101100011001011011100110111001110101010011010000101011111100000110001101111000010111010101110010010011001"
-                )
-            )
-        );
+    function getShuffle1(string calldata rcom, string calldata rP) external {
+        uint256[] memory array_Binary1 = new uint256[](156);
+        uint256 count1 = 0;
+        uint256 count2 = 1;
+
+        while (count2 != 156) {
+            if (
+                keccak256(bytes(string(rcom[count1:count2]))) ==
+                keccak256(bytes(string(rP[count1:count2])))
+            ) {
+                array_Binary1[count1] = 0;
+            } else {
+                array_Binary1[count1] = 1;
+            }
+            count1++;
+            count2++;
+        }
+        mapInt1[msg.sender] = array_Binary1;
     }
 
-    function bytes32ToString(bytes32 _bytes32) public returns (string memory) {
-        string memory bar = string(abi.encodePacked(_bytes32));
-        mapString[msg.sender] = bar;
+    function getShuffle2(string calldata rcom, string calldata rP) external {
+        uint256[] memory array_Binary1 = new uint256[](156);
+        uint256 count1 = 0;
+        uint256 count2 = 1;
+
+        while (count2 != 156) {
+            if (
+                keccak256(bytes(string(rcom[count1:count2]))) ==
+                keccak256(bytes(string(rP[count1:count2])))
+            ) {
+                array_Binary1[count1] = 0;
+            } else {
+                array_Binary1[count1] = 1;
+            }
+            count1++;
+            count2++;
+        }
+        mapInt2[msg.sender] = array_Binary1;
+    }
+
+    function CheckPlayerCasinoCard()
+        external
+        view
+        returns (uint256[52] memory)
+    {
+        uint256 slice_Index = 0;
+        uint256 temp1 = 5;
+        uint256 num = 0;
+        uint256[] memory array_Random = new uint256[](52);
+
+        for (uint256 i = 0; i < 156; i = i + 6) {
+            for (uint256 j = i; j < i + 6; j++) {
+                num += 2**temp1 * mapInt1[msg.sender][j];
+                temp1--;
+            }
+            array_Random[slice_Index] = num % 52;
+            slice_Index += 1;
+            temp1 = 5;
+            num = 0;
+        }
+
+        for (uint256 i = 0; i < 156; i = i + 6) {
+            for (uint256 j = i; j < i + 6; j++) {
+                num += 2**temp1 * mapInt2[msg.sender][j];
+                temp1--;
+            }
+            array_Random[slice_Index] = num % 52;
+            slice_Index += 1;
+            temp1 = 5;
+            num = 0;
+        }
+
+        uint256[52] memory newDeck =
+            [
+                uint256(0),
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51
+            ];
+
+        uint256 count = 0;
+        uint256 currentIndex = 52;
+        uint256 temporaryValue = 0;
+        //shuffle the newDeck with Fisher-Yates Algorithm using the random Index that we got from rFy above
+        while (currentIndex != 0) {
+            uint256 randomIndex = array_Random[count];
+            currentIndex = currentIndex - 1;
+            temporaryValue = newDeck[currentIndex];
+            newDeck[currentIndex] = newDeck[randomIndex];
+            newDeck[randomIndex] = temporaryValue;
+            count++;
+        }
+
+        return newDeck;
     }
 }
