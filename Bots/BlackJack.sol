@@ -31,8 +31,8 @@ contract BlackJack {
     //of our deck via indexes
     mapping(address => uint256) private mapGameDeckindex;
 
-    //The hash of the game deck per player
-    mapping(address => bytes32[52]) public mapCasinoHash;
+    // //The hash of the game deck per player
+    // mapping(address => bytes32[52]) public mapCasinoHash;
 
     //Keeps track of deck for each game per user address
     mapping(address => uint256[52]) private mapGameDeck;
@@ -52,7 +52,7 @@ contract BlackJack {
     mapping(address => uint256) private casino_AceCount;
     
     //keeps track of hashed rCom
-    mapping(address => string) private map_rCom;
+    mapping(address => bytes32) public map_rCom;
 
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
@@ -175,6 +175,33 @@ contract BlackJack {
     //END OF BACKEND
 
     //FOR FRONTEND - React
+    
+    function check_winning(address player) public {
+        require(
+            mapGamestate[player] == GameState.Reveal,
+            "This user's game is not ready for the reveal phase"
+        );
+        string memory won = "won";
+        string memory lost = "lost";
+        string memory push = "push";
+        if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(won))
+        ) {
+            mapGameResult[player] = GameResult.Won;
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(lost))
+        ) {
+            mapGameResult[player] = GameResult.Lost;
+        } else if (
+            keccak256(abi.encodePacked(compare(player))) ==
+            keccak256(abi.encodePacked(push))
+        ) {
+            mapGameResult[player] = GameResult.Push;
+        }
+    }
+
 
     //Always reveal the player hand
     function getPlayerHand(address user)
@@ -304,7 +331,7 @@ contract BlackJack {
     function Casino_get_deck(
         address user,
         uint256[52] calldata shuffledCards,
-        string calldata hashed_rCom
+        bytes32  hashed_rCom
     ) external {
         require(msg.sender == casino, "Only casino can call this function");
         require(
@@ -380,7 +407,7 @@ contract BlackJack {
     // Player Hit & Stand make up Phase 5
     // player draws a card
     // player only function
-    function Player_Hit() external {
+    function Player_Hit(address player) external {
         require(msg.sender != casino, "Only player can call this function");
         require(
             mapGamestate[msg.sender] == GameState.Player_Turn,
@@ -401,6 +428,7 @@ contract BlackJack {
 
         if (Player_check(msg.sender) > 21) {
             mapGamestate[msg.sender] = GameState.Reveal;
+            check_winning(player);
         }
     }
 
@@ -457,20 +485,24 @@ contract BlackJack {
         mapRevealExpiration[Player] = block.timestamp;
     }
 
-    function BinaryToDecimal (uint256 binary) private view returns (uint256) {
-        uint256 decimal = 0;
-        uint256 n = 0;
-        while (true) {
-            if (binary == 0) {
-                break;
-            } else {
-                uint256 temp = binary % 10;
-                decimal += temp*2**n;
-                binary = binary/10;
-                n++;
+    function get_random_nums(uint256[] memory array_Binary) pure private returns(uint256[] memory){
+        
+        uint256 slice_Index = 0;
+        uint256 temp1 = 5;
+        uint256 num = 0;
+        uint256[] memory array_Random = new uint256[](52);
+        for (uint256 i = 0; i < 312; i = i + 6) {
+                for (uint256 j = i; j < i + 6; j++) {
+                    num += 2 ** temp1 * array_Binary[j]; 
+                    temp1 --;
+                }
+                array_Random[slice_Index] = num;
+                slice_Index += 1;
+                temp1 = 5;
+                num = 0;
             }
-        }
-        return decimal;
+        return array_Random;
+        
     }
     
     
@@ -489,29 +521,14 @@ contract BlackJack {
             } else {
                 array_Binary[rCount] = 1;
             }
+            rCount += 1;
         }
-        
-        
         
         //slice the 312 digits number in term of 6. should have 312/6=52 
-        //We will store 52 binary number into array_Slice
-        //For Example: [0 ,1 ,1, 1, 0 ,1] => [011101]
-        uint256 slice_Index = 0;
-        uint256[] memory array_Slice = new uint256[](52);
-        for (uint256 i = 0; i < 313; i = i + 6) {
-            uint temp1 = 0;
-            for (uint256 j = i; j < i + 6; j++) {
-                temp1 = 10 * temp1 + array_Binary[j]; 
-            }
-            array_Slice[slice_Index] = temp1;
-            slice_Index++;
-        }
-        
+        //we will generate decimal in group of 6
+        //For Example: [0 ,1 ,1, 1, 0 ,1] => 29
         uint256[] memory array_Random = new uint256[](52);
-        
-        for (uint256 i = 0; i < 52; i++) {
-            array_Random[i] = BinaryToDecimal(array_Slice[i]);
-        }
+        array_Random = get_random_nums(array_Binary);
         
         uint256[] memory reconstructDeck = new uint256[](52);
 
@@ -577,6 +594,7 @@ contract BlackJack {
             uint256 temporaryValue = newDeck[count];
             newDeck[currentIndex] = newDeck[randomIndex];
             newDeck[randomIndex] = temporaryValue;
+            count += 1;
         }
         
         uint256 newCount = 0;
@@ -584,6 +602,7 @@ contract BlackJack {
             if (reconstructDeck[newCount] != newDeck[newCount]) {
                 return false; 
             }
+            newCount += 1;
         }
         return true;
        
@@ -596,8 +615,7 @@ contract BlackJack {
             "This user's game is not ready for the reveal phase"
         );
         
-        require(keccak256(abi.encodePacked(keccak256(abi.encodePacked(rCom)))) ==
-            keccak256(abi.encodePacked(map_rCom[player])), "rCom doesn't match");
+        require((keccak256(abi.encodePacked(rCom))) == map_rCom[player], "rCom doesn't match");
         
         require(CheckPlayerCasinoCard(player, rCom, rP) == true, "Cards' order don't match, cheating detected!");
         //take first 312 bits of rCom convert it into int, convert rP into int as well

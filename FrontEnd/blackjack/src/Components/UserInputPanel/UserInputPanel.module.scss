@@ -13,6 +13,9 @@
        font-size: 24px;
        margin-bottom: 15px;
 }
+#input:focus{
+       outline: none;
+}
 
 #form{
        display: inline-flex;
@@ -31,4 +34,8 @@
        background: none;
        width: 100px;
        height: 35px;
+}
+
+#submitButton:hover{
+       outline: none;
 }
