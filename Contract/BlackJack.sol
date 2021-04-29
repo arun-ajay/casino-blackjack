@@ -681,7 +681,7 @@ contract BlackJack {
             count1++;
             count2++;
         }
-        mapInt1[msg.sender] = array_Binary1;
+        mapInt1[player] = array_Binary1;
         return array_Binary1;
     }
 
@@ -710,7 +710,7 @@ contract BlackJack {
             count1++;
             count2++;
         }
-        mapInt2[msg.sender] = array_Binary1;
+        mapInt2[player] = array_Binary1;
         return array_Binary1;
     }
 
