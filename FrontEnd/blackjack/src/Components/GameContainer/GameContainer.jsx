@@ -14,6 +14,7 @@ import Modal from '../Modal/Modal'
 import {casinoAbi} from '../../Abis/casinoAbi'
 import {smartContractAddress} from '../../Config/config'
 import {getrcom, sendrp, gethash} from '../../Utils/api'
+import randomBinary from 'random-binary'
 
 const GameContainer=(Props)=> {
 
@@ -31,6 +32,7 @@ const GameContainer=(Props)=> {
        const [userCards, setUserCards]= useState([])
        const [userScore, setUserScore]= useState(0)
        const [userAddress, setUserAddress]= useState('')
+       const [userAddressCheckSum, setUserAddressCheckSum]=useState('')
        const [userBetAmount, setUserBetAmount]=useState(0)
 
        const [dealerCards, setDealerCards]= useState([])
@@ -69,27 +71,20 @@ const GameContainer=(Props)=> {
                      const accounts = await ethereum.request({method: 'eth_requestAccounts'})
                      const account = accounts[0]
                      setUserAddress(account)
+                     setUserAddressCheckSum(web3.utils.toChecksumAddress(account))
 
               }else{
                      console.log('please install metamask')
               }
 
        }
-
-       const randomDigit=()=> {
-              return Math.floor(Math.random() * Math.floor(2));
-       }
             
-       const generateRandomBinary=(binaryLength)=> {
-              let binary = "0b";
-              for(let i = 0; i < binaryLength; ++i) {
-                binary += randomDigit();
-              }
+       const generateRandomBinary=()=>{
+              let randomOne = randomBinary(156)
+              let randomTwo = randomBinary(156)
+              let finalRandom = randomOne + randomTwo
 
-              binary = binary.substring(binary.indexOf("b")+1);
-
-              setRP(binary)
-              return binary;
+              setRP(finalRandom)
        }
 
        const getRCOM = (userAddress)=>{
@@ -125,7 +120,7 @@ const GameContainer=(Props)=> {
                      console.log(response)
               })
               .catch((error)=>{
-                     console.log(error)
+                     console.log(error.message)
               })
        }
             
@@ -134,6 +129,7 @@ const GameContainer=(Props)=> {
        const hit= async ()=>{
               console.log('Hitting...')
               setUserAlert('Hitting...')
+
               try{
                      await casinoContract.methods.Player_Hit(userAddress).send({from: userAddress, to: casinoContractAddress})
                      console.log("Sucessfully hit.")
@@ -142,23 +138,24 @@ const GameContainer=(Props)=> {
                      console.log(error)
               }
               let gameState = await getGameState()
-                    if(gameState === '3'){
-                            //choose again
-                            console.log('choose again.')
-                            setUserAlert('Choose again')
-                    }if (gameState === '4'){
-                            console.log('not your turn anymore.')
-                            setUserAlert('')
-                            setUserTurn(!userTurn)
-                            monitorPhase5Status()
-                    }else if(gameState === '5'){
-                            console.log('reveal phase')
-                            monitorPhase5Status()
-                            setUserAlert('')
-                            getGameResult()
-                            setCasinoTurn(true)
-                            setTogglePayout(true)
-                    }
+
+              if(gameState === '3'){
+                     //choose again
+                     console.log('choose again.')
+                     setUserAlert('Choose again')
+              }if (gameState === '4'){
+                     console.log('not your turn anymore.')
+                     setUserAlert('')
+                     setUserTurn(!userTurn)
+                     monitorPhase5Status()
+              }else if(gameState === '5'){
+                     console.log('reveal phase')
+                     monitorPhase5Status()
+                     setUserAlert('')
+                     getGameResult()
+                     setCasinoTurn(true)
+                     setTogglePayout(true)
+              }
        }
 
        const toggleShowBetInput=()=>{
@@ -265,11 +262,13 @@ const GameContainer=(Props)=> {
        //PHASE ONE - initialize game
        const initiatePhaseOne= async (bet)=>{
               setUserAlert('Submitting your bet...')
-              generateRandomBinary(312)
+              generateRandomBinary()
               console.log('BEGIN PHASE ONE...')
               try{
                      await casinoContract.methods.initializeGame().send({from: userAddress, to: casinoContractAddress, value: web3.utils.toWei(bet.toString())})
                      sendRP(userAddress, rP)
+                     setUserAlert('Sending randomly generated binary bits (rP)...')
+                     await new Promise(resolve => setTimeout(resolve, 1000));
                      console.log('initialized game - PHASE ONE, CLEAR.')
                      toggleShowBetInput()
                      setUserAlert('Casino is shuffling cards and distributing them...')
@@ -481,6 +480,7 @@ const GameContainer=(Props)=> {
                                           <div className={styles.names}>Chengliang Tan</div>
                                           <div className={styles.names}>Lihan Zhan</div>
                                           <div className={styles.names}>Hong Fei Zheng</div>
+                                          <button onClick={getHASH(userAddressCheckSum)}>getHash</button>
                             </div>
                      </div>
               )
