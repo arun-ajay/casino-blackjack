@@ -21,8 +21,9 @@ contract BlackJack {
     mapping(address => uint256[12]) private mapPlayer_card;
     //Casino Hand
     mapping(address => uint256[12]) private mapCasino_card;
-
+    
     mapping(address => uint256[52]) private mapShuffled_Deck;
+    
 
     //Keeps track of index of player and casino hand
     //Useful for knowing where to place card on our size 12 array
@@ -52,12 +53,13 @@ contract BlackJack {
     //Keeps track of how many aces are in each hand
     mapping(address => uint256) private player_AceCount;
     mapping(address => uint256) private casino_AceCount;
-
+    
     //keeps track of hashed rCom
-    mapping(address => bytes32) public map_rCom1;
-    mapping(address => bytes32) public map_rCom2;
+    mapping(address => bytes32) public map_rCom1_hash;
+    mapping(address => bytes32) public map_rCom2_hash;
     mapping(address => uint256[]) public mapInt1;
     mapping(address => uint256[]) public mapInt2;
+    
 
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
@@ -180,7 +182,7 @@ contract BlackJack {
     //END OF BACKEND
 
     //FOR FRONTEND - React
-
+    
     function check_winning(address player) public {
         require(
             mapGamestate[player] == GameState.Reveal,
@@ -206,6 +208,7 @@ contract BlackJack {
             mapGameResult[player] = GameResult.Push;
         }
     }
+
 
     //Always reveal the player hand
     function getPlayerHand(address user)
@@ -316,7 +319,15 @@ contract BlackJack {
         for (uint256 i = 0; i < 52; i++) {
             mapGameDeck[msg.sender][i] = 100;
         }
-
+        
+        for (uint256 i = 0; i < 156; i++) {
+            mapInt1[msg.sender][i] = 100;
+        }
+        
+        for (uint256 i = 0; i < 156; i++) {
+            mapInt2[msg.sender][i] = 100;
+        }
+        
         //clear up the card value
         mapGameDeckindex[msg.sender] = 0;
         mapPlayer_card_num[msg.sender] = 0;
@@ -335,7 +346,7 @@ contract BlackJack {
     function Casino_get_deck(
         address user,
         uint256[52] calldata shuffledCards,
-        bytes32 hashed_rCom1,
+        bytes32  hashed_rCom1,
         bytes32 hashed_rCom2
     ) external {
         require(msg.sender == casino, "Only casino can call this function");
@@ -344,8 +355,8 @@ contract BlackJack {
             "Play needs to initilize the game"
         );
 
-        map_rCom1[user] = hashed_rCom1;
-        map_rCom2[user] = hashed_rCom2;
+        map_rCom1_hash[user] = hashed_rCom1;
+        map_rCom2_hash[user] = hashed_rCom2;
         mapGamestate[user] = GameState.Car_Distribution;
         mapGameDeck[user] = shuffledCards; //NOTE: shuffled cards should  come from hash
     }
@@ -491,7 +502,7 @@ contract BlackJack {
         mapRevealExpiration[Player] = block.timestamp;
     }
 
-    function FisherYatesShuffle(address player) internal {
+    function FisherYatesShuffle(address player) internal{
         uint256 slice_Index = 0;
         uint256 temp1 = 5;
         uint256 num = 0;
@@ -518,63 +529,9 @@ contract BlackJack {
             temp1 = 5;
             num = 0;
         }
-
-        uint256[52] memory newDeck =
-            [
-                uint256(0),
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14,
-                15,
-                16,
-                17,
-                18,
-                19,
-                20,
-                21,
-                22,
-                23,
-                24,
-                25,
-                26,
-                27,
-                28,
-                29,
-                30,
-                31,
-                32,
-                33,
-                34,
-                35,
-                36,
-                37,
-                38,
-                39,
-                40,
-                41,
-                42,
-                43,
-                44,
-                45,
-                46,
-                47,
-                48,
-                49,
-                50,
-                51
-            ];
-
+            
+        uint[52] memory newDeck = [uint(0), 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
+        
         uint256 count = 0;
         uint256 currentIndex = 52;
         uint256 temporaryValue = 0;
@@ -586,11 +543,18 @@ contract BlackJack {
             newDeck[currentIndex] = newDeck[randomIndex];
             newDeck[randomIndex] = temporaryValue;
             count++;
-        }
+        }  
         mapShuffled_Deck[player] = newDeck;
+        
+        
     }
-
-    function CheckPlayerCasinoCard(address player) private view returns (bool) {
+    
+    function CheckPlayerCasinoCard(address player)
+        private
+        view
+        returns (bool)
+    {   
+            
         uint256[] memory reconstructDeck = new uint256[](52);
 
         uint256 casinoHandIndex = 0;
@@ -643,37 +607,28 @@ contract BlackJack {
             ];
             reconstructIndex += 1;
         }
-
+        
+        
         uint256 newCount = 0;
         while (newCount < 52) {
-            if (
-                reconstructDeck[newCount] != mapShuffled_Deck[player][newCount]
-            ) {
-                return false;
+            if (reconstructDeck[newCount] != mapShuffled_Deck[player][newCount]) {
+                return false; 
             }
         }
         return true;
+       
     }
 
-    function getShuffle1(
-        address player,
-        string calldata rCom1,
-        string calldata rP1
-    ) external returns (uint256[] memory) {
-        require(
-            (keccak256(abi.encodePacked(rCom1))) == map_rCom1[player],
-            "rCom doesn't match"
-        );
-
+    function getShuffle1(address player, string calldata rCom1, string calldata rP1) external returns (uint256[] memory){
+        require((keccak256(abi.encodePacked(rCom1))) == map_rCom1_hash[player], "rCom doesn't match");
+        
         uint256[] memory array_Binary1 = new uint256[](156);
-        uint256 count1 = 0;
+        uint256 count1 = 0; 
         uint256 count2 = 1;
-
+        
         while (count2 != 156) {
-            if (
-                keccak256(bytes(string(rCom1[count1:count2]))) ==
-                keccak256(bytes(string(rP1[count1:count2])))
-            ) {
+    
+            if (keccak256(bytes(string(rCom1[count1:count2]))) == keccak256(bytes(string(rP1[count1:count2])))) {
                 array_Binary1[count1] = 0;
             } else {
                 array_Binary1[count1] = 1;
@@ -684,25 +639,17 @@ contract BlackJack {
         mapInt1[player] = array_Binary1;
         return array_Binary1;
     }
-
-    function getShuffle2(
-        address player,
-        string calldata rCom2,
-        string calldata rP2
-    ) external returns (uint256[] memory) {
-        require(
-            (keccak256(abi.encodePacked(rCom2))) == map_rCom2[player],
-            "rCom doesn't match"
-        );
+    
+      
+    function getShuffle2(address player, string calldata rCom2, string calldata rP2) external returns (uint256[] memory){
+        require((keccak256(abi.encodePacked(rCom2))) == map_rCom2_hash[player], "rCom doesn't match");
         uint256[] memory array_Binary1 = new uint256[](156);
-        uint256 count1 = 0;
+        uint256 count1 = 0; 
         uint256 count2 = 1;
-
+        
         while (count2 != 156) {
-            if (
-                keccak256(bytes(string(rCom2[count1:count2]))) ==
-                keccak256(bytes(string(rP2[count1:count2])))
-            ) {
+
+            if (keccak256(bytes(string(rCom2[count1:count2]))) == keccak256(bytes(string(rP2[count1:count2])))) {
                 array_Binary1[count1] = 0;
             } else {
                 array_Binary1[count1] = 1;
@@ -712,20 +659,19 @@ contract BlackJack {
         }
         mapInt2[player] = array_Binary1;
         return array_Binary1;
+       
     }
-
+    
     // This is phase 6
     function Payout(address player) external {
         require(
             mapGamestate[player] == GameState.Reveal,
             "This user's game is not ready for the reveal phase"
         );
-
-        require(
-            CheckPlayerCasinoCard(player) == true,
-            "Cards' order don't match, cheating detected!"
-        );
-
+        require(mapInt1[player][1] != 100, "You must call shuffle 1 first!");
+        require(mapInt2[player][1] != 100, "You must call shuffle 2 first!");
+        require(CheckPlayerCasinoCard(player) == true, "Cards' order don't match, cheating detected!");
+ 
         string memory won = "won";
         string memory lost = "lost";
         string memory push = "push";
@@ -742,7 +688,7 @@ contract BlackJack {
         } else if (
             keccak256(abi.encodePacked(compare(player))) ==
             keccak256(abi.encodePacked(push))
-        ) {
+        ) { 
             Game_Pushed(payable(player));
         }
     }
@@ -877,11 +823,10 @@ contract BlackJack {
         payable(player).transfer(mapBet[player]);
         mapBet[player] = 0;
     }
-
+    
     //allow casino to change game state from Clear to Inactive
     function Clear_Game(address player) private {
-        require(
-            msg.sender == casino,
+        require(msg.sender == casino,
             "This function is only for casinos to use."
         );
         require(
