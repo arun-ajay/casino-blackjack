@@ -119,19 +119,16 @@ async def phase2Response(activeGame,nonce):
                                    shuffleList.append(num%52)
 
                             shuffledDeck = shuffleCards(shuffleList)
-                            print(shuffledDeck)
-                            print(activeGame)
-
+                            print(nonce)
                             transaction = await asyncFunction(1,casinoContract.functions.Casino_get_deck(activeGame,shuffledDeck,rCom1Hash,rCom2Hash).buildTransaction({
                                    'from': account,
                                    'nonce': nonce,
-                                   'gasPrice': 300000000
                             }))
 
                             signed_tx = await asyncFunction(1,w3.eth.account.sign_transaction(transaction, config.casinoPrivateKey))
 
                             response = await asyncFunction(1,w3.eth.send_raw_transaction(signed_tx.rawTransaction))
-                            print("\tDone:",response)
+                            print("\tDone:",response.hex())
                             nonce += 1
        except Exception as e:
               print(str(e))
