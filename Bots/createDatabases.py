@@ -2,5 +2,5 @@ import sqlite3
 
 connection = sqlite3.connect("blackjack.db")
 cursor = connection.cursor()
-cursor.execute(" CREATE TABLE IF NOT EXISTS GAMEDATA (ADR TEXT, RCOM TEXT, RD TEXT, HASH BLOB, RP TEXT)")
+cursor.execute(" CREATE TABLE IF NOT EXISTS GAMEDATA (ADR TEXT, RCOM1 TEXT, RCOM2 TEXT, RCOM1HASH BLOB, RCOM2HASH BLOB, RP1 TEXT, RP2 TEXT)")
 connection.commit()

@@ -51,7 +51,8 @@ def sendrp():
         try:
             jsonData = request.json
             address = jsonData["address"]
-            rp = jsonData["rp"]
+            rP1 = jsonData["rP1"]
+            rP2 = jsonData["rp2"]
             connection = sqlite3.connect("blackjack.db")
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(address,))
@@ -68,7 +69,12 @@ def sendrp():
 
                 if dbData is None:
                     body = {
-                        "Message": "Your hash isn't ready yet!"
+                        "Message": "Your hashes aren't ready yet!"
+                    }
+                    return jsonify(body),400
+                elif len(rP1) != 156 or len(rP2) != 156:
+                    body = {
+                        "Message": "You gave an incorrect rp. Please make sure both rp1 and rp2 are both 156 bits each."
                     }
                     return jsonify(body),400
                 elif len(dbData[4]) != 0:
@@ -78,10 +84,11 @@ def sendrp():
                     return jsonify(body),400
                 else:
                     dbData = list(dbData)
-                    dbData[4] = rp
+                    dbData[5] = rP1
+                    dbData[6] = rP2
                     cursor.execute("DELETE FROM GAMEDATA WHERE [ADR] = ?",(address,))
                     connection.commit()
-                    cursor.execute("INSERT INTO GAMEDATA VALUES(?,?,?,?,?)", tuple(dbData))
+                    cursor.execute("INSERT INTO GAMEDATA VALUES(?,?,?,?,?,?,?)", tuple(dbData))
                     connection.commit()
                     body = {
                         "Message": "We've received your rp!"
@@ -123,18 +130,28 @@ def getHash():
                     }
                     return jsonify(body),400
                 else:
-                    hashData = dbData[3]
-                    hashData = str(hashData)
+                    rComHash1 = dbData[3]
+                    rComHash2 = dbData[4]
+                    rComHash1 = str(rComHash1)
+                    rComHash2 = str(rComHash2)
                     hashBuild = []
-                    for index,char in enumerate(hashData):
-                            if index == 0 or index == 1 or index == (len(hashData) - 1):
+                    for index,char in enumerate(rComHash1):
+                            if index == 0 or index == 1 or index == (len(rComHash1) - 1):
                                     continue
                             else:
                                     hashBuild.append(char)
-                    rComHash = "".join(hashBuild)
+                    rComHash1 = "".join(hashBuild)
+                    hashBuild = []
+                    for index,char in enumerate(rComHash2):
+                            if index == 0 or index == 1 or index == (len(rComHash2) - 1):
+                                    continue
+                            else:
+                                    hashBuild.append(char)
+                    rComHash2 = "".join(hashBuild)
 
                     body = {
-                        "hash": rComHash #Fourth Column is Hash
+                        "rComHash1": rComHash1, #Fourth Column is Hash
+                        "rComHash2": rComHash2 #Fourth Column is Hash
                     }
                     return jsonify(body),200
 
@@ -175,7 +192,8 @@ def getrcom():
                     return jsonify(body),400
                 else:
                     body = {
-                        "rcom": dbData[1] #Fourth Column is Hash
+                        "rCom1": dbData[1],
+                        "rCom2": dbData[2]
                     }
                     return jsonify(body),200
 
