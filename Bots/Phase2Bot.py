@@ -7,21 +7,21 @@ import sqlite3
 from Crypto.Random import random
 
 def generateRandomNumberWithHash():
-       rComNum = random.getrandbits(512) #int
-       rCom = bin(rComNum).split('b')[1] #string 
-       rComHashByte32 = Web3.soliditySha3(["string"],[rCom]).hex()
-       rDBinaryList = []
-       rd = ""
-       for index,char in enumerate(rCom):
-              if index == 312:
-                     rd = "".join(rDBinaryList)
-                     break
-              else:
-                     rDBinaryList.append(char)
+
+       rCom1Num = random.getrandbits(156) #int
+       rCom2Num = random.getrandbits(156)
+
+       rCom1 = bin(rCom1Num).split('b')[1] #string
+       rCom2 = bin(rCom2Num).split('b')[1] #string
+       
+       rCom1HashBytes32 = Web3.soliditySha3(["string"],[rCom1]).hex()
+       rCom2HashBytes32 = Web3.soliditySha3(["string"],[rCom2]).hex()
+
        return {
-              "rCom": rCom,
-              "hash": rComHashByte32,
-              "rD": rd
+              "rCom1": rCom1,
+              "rCom1Hash": rCom1HashBytes32,
+              "rCom2": rCom2,
+              "rCom2Hash": rCom2HashBytes32,
        }
                      
 
@@ -69,23 +69,29 @@ async def phase2Response(activeGame,nonce):
                      print("Error: More than one entry of data")
               elif len(gameData) == 0:
                      casinoData = generateRandomNumberWithHash()
-                     cursor.execute("INSERT OR REPLACE INTO GAMEDATA VALUES (?,?,?,?,?)",tuple([activeGame,casinoData["rCom"],casinoData["rD"],casinoData["hash"],""]))
+                     cursor.execute("INSERT OR REPLACE INTO GAMEDATA VALUES (?,?,?,?,?,?,?)",tuple([activeGame,casinoData["rCom1"],casinoData["rCom2"],casinoData["rCom1Hash"],casinoData["rCom2Hash"],"",""]))
                      connection.commit()
-                     print("\tCreated rcom, rd, and hash for casino. Waiting for player rp.")
+                     print("\tCreated rcom1,rcom2, hash1 and hash2 for casino. Waiting for player rp1 and rp2.")
               else:
                      gameData = gameData[0]
-                     if len(gameData[4]) == 0:
-                            print("\t Cannot create deck yet. Still waiting on player rp.")
+                     if len(gameData[5]) == 0 or len(gameData[6] == 0):
+                            print("\t Cannot create deck yet. Still waiting on player rp1 and rp2.")
                      else:
                             print("\t All data is present! Will now work on creating deck.")
                             cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(activeGame,))
                             gameData = cursor.fetchall()
                             gameData = gameData[0]
 
-                            rD = gameData[2]
-                            rP = gameData[4]
-                            rComHash = gameData[3]
+                            rCom1 = gameData[1]
+                            rCom2 = gameData[2]
+                            rP1 = gameData[5]
+                            rP2 = gameData[6]
+                            rCom1Hash = gameData[3]
+                            rCom2Hash = gameData[4]
                             rFyBuild = []
+
+                            rD = rCom1 + rCom2
+                            rP = rP1 + rP2
 
                             for i in range(312):
                                    if rD[i] == rP[i]:
@@ -106,7 +112,7 @@ async def phase2Response(activeGame,nonce):
 
                             shuffledDeck = shuffleCards(shuffleList)
 
-                            transaction = await asyncFunction(1,casinoContract.functions.Casino_get_deck(activeGame,shuffledDeck,rComHash).buildTransaction({
+                            transaction = await asyncFunction(1,casinoContract.functions.Casino_get_deck(activeGame,shuffledDeck,rCom1Hash,rCom2Hash).buildTransaction({
                                    'from': account,
                                    'nonce': nonce
                             }))

@@ -30,9 +30,14 @@ export const casinoAbi = [
 				"type": "uint256[52]"
 			},
 			{
-				"internalType": "string",
-				"name": "hashed_rCom",
-				"type": "string"
+				"internalType": "bytes32",
+				"name": "hashed_rCom1",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "hashed_rCom2",
+				"type": "bytes32"
 			}
 		],
 		"name": "Casino_get_deck",
@@ -46,16 +51,6 @@ export const casinoAbi = [
 				"internalType": "address",
 				"name": "player",
 				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "rCom",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "rP",
-				"type": "string"
 			}
 		],
 		"name": "Payout",
@@ -67,7 +62,7 @@ export const casinoAbi = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "Player",
+				"name": "player",
 				"type": "address"
 			}
 		],
@@ -259,6 +254,64 @@ export const casinoAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "rCom1",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "rP1",
+				"type": "string"
+			}
+		],
+		"name": "getShuffle1",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "rCom2",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "rP2",
+				"type": "string"
+			}
+		],
+		"name": "getShuffle2",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "initializeGame",
 		"outputs": [],
@@ -279,30 +332,6 @@ export const casinoAbi = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "mapCasinoHash",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
 			}
 		],
 		"stateMutability": "view",
@@ -359,12 +388,74 @@ export const casinoAbi = [
 				"type": "uint256"
 			}
 		],
-		"name": "mapPlayer_card",
+		"name": "mapInt1",
 		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "mapInt2",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "map_rCom1",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "map_rCom2",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
 			}
 		],
 		"stateMutability": "view",
