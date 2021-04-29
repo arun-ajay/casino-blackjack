@@ -12,7 +12,15 @@ def generateRandomNumberWithHash():
        rCom2Num = random.getrandbits(156)
 
        rCom1 = bin(rCom1Num).split('b')[1] #string
+       if len(rCom1) < 156:
+              diff = 156 - len(rCom1)
+              zeroExtension = "0"*diff
+              rCom1 = zeroExtension + rCom1
        rCom2 = bin(rCom2Num).split('b')[1] #string
+       if len(rCom2) < 156:
+              diff = 156 - len(rCom2)
+              zeroExtension = "0"*diff
+              rCom2 = zeroExtension + rCom2
        
        rCom1HashBytes32 = Web3.soliditySha3(["string"],[rCom1]).hex()
        rCom2HashBytes32 = Web3.soliditySha3(["string"],[rCom2]).hex()
@@ -74,24 +82,27 @@ async def phase2Response(activeGame,nonce):
                      print("\tCreated rcom1,rcom2, hash1 and hash2 for casino. Waiting for player rp1 and rp2.")
               else:
                      gameData = gameData[0]
-                     if len(gameData[5]) == 0 or len(gameData[6] == 0):
+                     if len(gameData[5]) == 0 or len(gameData[6]) == 0:
+                            
                             print("\t Cannot create deck yet. Still waiting on player rp1 and rp2.")
                      else:
+                            
                             print("\t All data is present! Will now work on creating deck.")
-                            cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(activeGame,))
-                            gameData = cursor.fetchall()
-                            gameData = gameData[0]
 
                             rCom1 = gameData[1]
+                            print(len(rCom1))
                             rCom2 = gameData[2]
+                            print(len(rCom2))
                             rP1 = gameData[5]
                             rP2 = gameData[6]
-                            rCom1Hash = gameData[3]
-                            rCom2Hash = gameData[4]
+                            rCom1Hash = str(gameData[3])
+                            rCom2Hash = str(gameData[4])
                             rFyBuild = []
 
                             rD = rCom1 + rCom2
                             rP = rP1 + rP2
+
+                         
 
                             for i in range(312):
                                    if rD[i] == rP[i]:
@@ -106,15 +117,15 @@ async def phase2Response(activeGame,nonce):
                             for binaryNumber in binaryList:
                                    num = int(binaryNumber,2)
                                    shuffleList.append(num%52)
-                            
-                            print(rComHash)
-                            print(type(rComHash))
 
                             shuffledDeck = shuffleCards(shuffleList)
+                            print(shuffledDeck)
+                            print(activeGame)
 
                             transaction = await asyncFunction(1,casinoContract.functions.Casino_get_deck(activeGame,shuffledDeck,rCom1Hash,rCom2Hash).buildTransaction({
                                    'from': account,
-                                   'nonce': nonce
+                                   'nonce': nonce,
+                                   'gasPrice': 300000000
                             }))
 
                             signed_tx = await asyncFunction(1,w3.eth.account.sign_transaction(transaction, config.casinoPrivateKey))
