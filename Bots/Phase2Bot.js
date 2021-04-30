@@ -37,10 +37,6 @@ function createDBConnection(filename){
      })
 }
 
-
-
-
-
 const generateRandomNumberWithHash=()=>{
        let rCom1 = randomBinary(156).toString()
        let rCom2 = randomBinary(156).toString()
@@ -56,12 +52,8 @@ const generateRandomNumberWithHash=()=>{
        }
 }
 
-
-//GOOD?
 const shuffleCards=(shuffleArray)=>{
        let deck = []
-
-
 
        for(var i=0; i<52;i++){
               deck.push(i)
@@ -83,8 +75,6 @@ const shuffleCards=(shuffleArray)=>{
        return deck
 }
 
-
-//GOOD?
 const getPhase2Games=async ()=>{
        const temp = await casinoContract.methods.getPhase2Games().call({from: myAddress})
        
@@ -98,14 +88,7 @@ const getPhase2Games=async ()=>{
 
        return activeGames
 }
-// const test=()=>{
 
-//      db.serialize(()=>{
-//           db.all("SELECT * FROM GAMEDATA WHERE [ADR] = ?", '0x2372F830e274e0f4B5CD7710d519B60eA06007CB', (error, allRows)=>{
-                 
-//           }
-//      }
-// }
 
 const getGameData =async(activeGame)=>{
 
