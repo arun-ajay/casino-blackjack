@@ -21,7 +21,6 @@ var accounts = web3.eth.accounts.wallet
 var account = accounts["0"]
 var myAddress = account["address"]
 
-
 // getActiveGames -> Retrieves all of the games that are in Phase 2
 
 
@@ -58,7 +57,7 @@ const getPhase3Games = async () => {
 }
 
 
-const phase3Response =  async (activeGames) => {
+const phase3Response =  async (activeGames, nonce) => {
     if (activeGames.length > 0){
         console.log("Detected the following games")
         console.log(activeGames)
@@ -94,10 +93,12 @@ const main = async () => {
 
 
 
+     let nonce = await web3.eth.getTransactionCount(myAddress, 'pending')
     const phase3Bot =  async () => {
         var activeGames =  await getPhase3Games()
         console.log(activeGames)
-        await phase3Response(activeGames)
+        nonce += 33
+        await phase3Response(activeGames, nonce)
         setTimeout(phase3Bot,5000)
     }
     phase3Bot()

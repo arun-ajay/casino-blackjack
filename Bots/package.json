@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "random-binary": "^1.0.3",
+    "sql.js": "^1.5.0",
+    "sqlite": "^4.0.21",
+    "sqlite3": "^5.0.2"
+  }
+}

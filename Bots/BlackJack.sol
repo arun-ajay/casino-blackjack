@@ -22,7 +22,7 @@ contract BlackJack {
     //Casino Hand
     mapping(address => uint256[12]) private mapCasino_card;
  
-    mapping(address => uint256[52]) private mapShuffled_Deck;
+    mapping(address => uint256[52]) public mapShuffled_Deck;
  
  
     //Keeps track of index of player and casino hand
@@ -39,6 +39,7 @@ contract BlackJack {
  
     //Keeps track of deck for each game per user address
     mapping(address => uint256[52]) private mapGameDeck;
+    mapping(address => uint256[52]) private mapReconstructedDeck;
  
     //Keeps track of bets placed on each game
     mapping(address => uint256) public mapBet;
@@ -270,6 +271,20 @@ contract BlackJack {
         );
  
         uint256[52] memory returnData = mapGameDeck[msg.sender];
+ 
+        return returnData;
+    }
+    
+    function getMapShuffledDeck() public view returns (uint256[52] memory) {
+ 
+        uint256[52] memory returnData = mapShuffled_Deck[msg.sender];
+ 
+        return returnData;
+    }
+    
+    function getReconstructedDeck() public view returns (uint256[52] memory) {
+ 
+        uint256[52] memory returnData = mapReconstructedDeck[msg.sender];
  
         return returnData;
     }
@@ -519,7 +534,7 @@ contract BlackJack {
         mapRevealExpiration[Player] = block.timestamp;
     }
  
-    function FisherYatesShuffle(address player) internal{
+    function FisherYatesShuffle(address player) external{
         uint256 slice_Index = 0;
         uint256 temp1 = 5;
         uint256 num = 0;
@@ -568,10 +583,9 @@ contract BlackJack {
  
     function CheckPlayerCasinoCard(address player)
         private
-        view
         returns (bool)
-    {   
- 
+    {  
+        
         uint256[] memory reconstructDeck = new uint256[](52);
  
         uint256 casinoHandIndex = 0;
@@ -624,7 +638,10 @@ contract BlackJack {
             ];
             reconstructIndex += 1;
         }
- 
+        
+        for (uint256 i = 0; i < 52; i++){
+            mapReconstructedDeck[player][i] = reconstructDeck[i];
+        }
  
         uint256 newCount = 0;
         while (newCount < 52) {
