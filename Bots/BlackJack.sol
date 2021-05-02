@@ -23,6 +23,8 @@ contract BlackJack {
     mapping(address => uint256[12]) private mapCasino_card;
  
     mapping(address => uint256[52]) public mapShuffled_Deck;
+    
+    mapping(address => uint256[52]) public mapArray_random;
  
  
     //Keeps track of index of player and casino hand
@@ -533,6 +535,42 @@ contract BlackJack {
         mapGamestate[Player] = GameState.Reveal;
         mapRevealExpiration[Player] = block.timestamp;
     }
+    function get_random_value(address player) public returns(uint256[52] memory){
+    
+        uint256 slice_Index = 0;
+        uint256 temp1 = 5;
+        uint256 num = 0;
+        // uint256[] memory array_Random = new uint256[](52);
+        
+        
+        for (uint256 i = 0; i < 156; i = i + 6) {
+            for (uint256 j = i; j < i + 6; j++) {
+                num += 2**temp1 * mapInt1[player][j];
+                temp1--;
+            }
+            mapArray_random[player][slice_Index] = num % 52;
+            slice_Index += 1;
+            temp1 = 5;
+            num = 0;
+        }
+ 
+        for (uint256 i = 0; i < 156; i = i + 6) {
+            for (uint256 j = i; j < i + 6; j++) {
+                num += 2**temp1 * mapInt2[player][j];
+                temp1--;
+            }
+            mapArray_random[player][slice_Index] = num % 52;
+            slice_Index += 1;
+            temp1 = 5;
+            num = 0;
+        }
+        return mapArray_random[player];
+}
+    function getArrayRandom(address player) public view returns (uint256[52] memory){
+        return mapArray_random[player];
+    } 
+
+    
  
     function FisherYatesShuffle(address player) external{
         uint256 slice_Index = 0;
@@ -665,7 +703,7 @@ contract BlackJack {
         uint256 count1 = 0; 
         uint256 count2 = 1;
  
-        while (count2 != 156) {
+        while (count2 != 157) {
  
             if (keccak256(bytes(string(rCom1[count1:count2]))) == keccak256(bytes(string(rP1[count1:count2])))) {
                 array_Binary1[count1] = 0;
@@ -694,7 +732,7 @@ contract BlackJack {
         uint256 count1 = 0; 
         uint256 count2 = 1;
  
-        while (count2 != 156) {
+        while (count2 != 157) {
  
             if (keccak256(bytes(string(rCom2[count1:count2]))) == keccak256(bytes(string(rP2[count1:count2])))) {
                 array_Binary1[count1] = 0;
