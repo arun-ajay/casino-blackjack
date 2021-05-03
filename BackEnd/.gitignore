@@ -1,0 +1,5 @@
+config.js
+__pycache__/*
+blackjack.db
+node_modules/*
+config.py
