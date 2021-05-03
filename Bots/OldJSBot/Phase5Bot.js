@@ -39,7 +39,7 @@ const getPhase5Games = async () => {
 }
 
 
-const phase5Response =  async (activeGames) => {
+const phase5Response =  async (activeGames, nonce) => {
     if (activeGames.length > 0){
         console.log("Detected the following games")
         console.log(activeGames)
@@ -74,11 +74,12 @@ const phase5Response =  async (activeGames) => {
 const main = async () => {
 
 
-
+     let nonce = await web3.eth.getTransactionCount(myAddress, 'pending')
     const phase5Bot =  async () => {
         var activeGames =  await getPhase5Games()
         console.log(activeGames)
-        await phase5Response(activeGames)
+        await phase5Response(activeGames, nonce)
+        nonce += 1
         setTimeout(phase5Bot,5000)
     }
     phase5Bot()

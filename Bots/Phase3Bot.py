@@ -31,23 +31,30 @@ async def phase3Response(activeGame,nonce):
               print("\tDistributing cards for user and dealer for address:", activeGame)
               transaction = await asyncFunction(casinoContract.functions.distribute(activeGame).buildTransaction(
                      {'nonce': nonce, 'from': account, 'to': activeGame}))
-              signed_tx = w3.eth.account.sign_transaction(
-                     transaction, config.casinoPrivateKey)
-              response = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+              signed_tx = await asyncFunction(w3.eth.account.sign_transaction(transaction, config.casinoPrivateKey))
+              response = await asyncFunction(w3.eth.send_raw_transaction(signed_tx.rawTransaction))
               print(response)
               print("\tDone")
               print()
-       except: 
-              print('failed')
+       except Exception as e: 
+              print(str(e))
 
 
 nonce = w3.eth.getTransactionCount(account)
 
 while True:
-
+       print("- - - - - - - - - -")
        print("Scanning games...")
        print()
-       phase3Response(getPhase3Games(), nonce)
-       nonce = nonce + 1
-
+       phase3Games = getPhase3Games()
+       print(phase3Games)
+       if len(phase3Games) > 0:
+              print("Games in phase 3 detected:")
+              for game in phase3Games:
+                     print("\t{}".formate(str(game)))
+              print()
+              for game in phase3Games:
+                     asyncio.run(phase3Response(game,nonce))
+                     nonce += 1
+              print()
        time.sleep(5)

@@ -1,18 +1,15 @@
-
-import time
-
 from web3 import Web3
 import config
-
+import math
+import random
+import time
+import asyncio
 
 w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
-smartContractAddress = Web3.toChecksumAddress(config.smartContractAddress)
-
-print(w3.isConnected())
-
-casinoContract = w3.eth.contract(address=smartContractAddress, abi=config.abi)
 accounts = w3.eth.account.privateKeyToAccount(config.casinoPrivateKey)
 account = accounts.address
+smartContractAddress = Web3.toChecksumAddress(config.smartContractAddress)
+casinoContract = w3.eth.contract(address=smartContractAddress, abi=config.abi)
 
 
 def getPhase5Games():
@@ -23,6 +20,11 @@ def getPhase5Games():
             activeGames.append(i)
 
     return activeGames
+
+
+async def asyncFunction(delay,func):
+       await asyncio.sleep(delay)
+       return func
 
 
 def phase5Response(activeGames):

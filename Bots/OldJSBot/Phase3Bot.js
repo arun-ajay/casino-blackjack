@@ -21,30 +21,9 @@ var accounts = web3.eth.accounts.wallet
 var account = accounts["0"]
 var myAddress = account["address"]
 
-
 // getActiveGames -> Retrieves all of the games that are in Phase 2
 
 
-const openCards = () => {
-    var array = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
-    var currentIndex = array.length, temporaryValue, randomIndex;
-  
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-  
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-  
-    return array;
-  }
-  
 
 const getPhase3Games = async () => {
    const temp = await casinoContract.methods.getPhase3Games().call({from: myAddress})
@@ -58,7 +37,7 @@ const getPhase3Games = async () => {
 }
 
 
-const phase3Response =  async (activeGames) => {
+const phase3Response =  async (activeGames, nonce) => {
     if (activeGames.length > 0){
         console.log("Detected the following games")
         console.log(activeGames)
@@ -68,16 +47,7 @@ const phase3Response =  async (activeGames) => {
         activeGame = activeGames[i]
         console.log("Distribute cards for user and dealer for address:",activeGame)
 
-        const params = {
-            name: 'distribute',
-            type: 'function',
-            inputs: [
-                {
-                    type: 'address',
-                    name: activeGame
-                }
-            ]
-        }
+
     
         const gasPrice = await web3.eth.getGasPrice();
         const gasEstimate = await casinoContract.methods.distribute(activeGame).estimateGas({ from: myAddress, to: activeGame  });
@@ -94,10 +64,12 @@ const main = async () => {
 
 
 
+     let nonce = await web3.eth.getTransactionCount(myAddress, 'pending')
     const phase3Bot =  async () => {
         var activeGames =  await getPhase3Games()
         console.log(activeGames)
-        await phase3Response(activeGames)
+        nonce += 33
+        await phase3Response(activeGames, nonce)
         setTimeout(phase3Bot,5000)
     }
     phase3Bot()

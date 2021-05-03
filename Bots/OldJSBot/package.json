@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "sqlite3": "^5.0.2",
     "web3": "^1.3.4"
   }
 }
