@@ -184,10 +184,7 @@ const BinaryToDec =(array)=>{
 }
 
 const callTransaction= async (activeGame,shuffledDeck,rCom1Hash,rCom2Hash, nonce)=>{
-     console.log(activeGame)
-     console.log(shuffledDeck)
-     console.log(typeof rCom1Hash)
-     console.log(rCom2Hash)
+     
      const gasPrice = await web3.eth.getGasPrice();
 
      const gasEstimate = await casinoContract.methods.Casino_get_deck(activeGame,shuffledDeck,rCom1Hash,rCom2Hash).estimateGas({ from: myAddress, to: activeGame  });

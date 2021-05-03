@@ -22,9 +22,8 @@ contract BlackJack {
     //Casino Hand
     mapping(address => uint256[12]) private mapCasino_card;
  
-    mapping(address => uint256[52]) public mapShuffled_Deck;
+    mapping(address => uint256[52]) private mapShuffled_Deck;
     
-    mapping(address => uint256[52]) public mapArray_random;
  
  
     //Keeps track of index of player and casino hand
@@ -60,8 +59,8 @@ contract BlackJack {
     //keeps track of hashed rCom
     mapping(address => bytes32) public map_rCom1_hash;
     mapping(address => bytes32) public map_rCom2_hash;
-    mapping(address => uint256[156]) public mapInt1;
-    mapping(address => uint256[156]) public mapInt2;
+    mapping(address => uint256[156]) private mapInt1;
+    mapping(address => uint256[156]) private mapInt2;
  
  
     //Keeps a log of all addresses that interacted with this smart contract
@@ -277,19 +276,19 @@ contract BlackJack {
         return returnData;
     }
     
-    function getMapShuffledDeck() public view returns (uint256[52] memory) {
+    // function getMapShuffledDeck() public view returns (uint256[52] memory) {
  
-        uint256[52] memory returnData = mapShuffled_Deck[msg.sender];
+    //     uint256[52] memory returnData = mapShuffled_Deck[msg.sender];
  
-        return returnData;
-    }
+    //     return returnData;
+    // }
     
-    function getReconstructedDeck() public view returns (uint256[52] memory) {
+    // function getReconstructedDeck() public view returns (uint256[52] memory) {
  
-        uint256[52] memory returnData = mapReconstructedDeck[msg.sender];
+    //     uint256[52] memory returnData = mapReconstructedDeck[msg.sender];
  
-        return returnData;
-    }
+    //     return returnData;
+    // }
  
     //END OF FRONTEND
  
@@ -336,18 +335,6 @@ contract BlackJack {
         for (uint256 i = 0; i < 52; i++) {
             mapGameDeck[msg.sender][i] = 100;
         }
- 
- 
- 
-        // for (uint256 i = 0; i < 156; i++) {
-        //     mapInt1[msg.sender][i] = 100;
-        // }
- 
- 
- 
-        // for (uint256 i = 0; i < 156; i++) {
-        //     mapInt2[msg.sender][i] = 100;
-        // }
  
  
         //clear up the card value
@@ -503,6 +490,7 @@ contract BlackJack {
             mapGamestate[player] == GameState.Casino_Turn,
             "Player has not finish yet"
         );
+        
         uint256 deck_index = mapGameDeckindex[player];
         uint256 casino_index = mapCasino_card_num[player];
         mapCasino_card[player][casino_index] = mapGameDeck[player][deck_index];
@@ -535,41 +523,7 @@ contract BlackJack {
         mapGamestate[Player] = GameState.Reveal;
         mapRevealExpiration[Player] = block.timestamp;
     }
-    function get_random_value(address player) public returns(uint256[52] memory){
     
-        uint256 slice_Index = 0;
-        uint256 temp1 = 5;
-        uint256 num = 0;
-        // uint256[] memory array_Random = new uint256[](52);
-        
-        
-        for (uint256 i = 0; i < 156; i = i + 6) {
-            for (uint256 j = i; j < i + 6; j++) {
-                num += 2**temp1 * mapInt1[player][j];
-                temp1--;
-            }
-            mapArray_random[player][slice_Index] = num % 52;
-            slice_Index += 1;
-            temp1 = 5;
-            num = 0;
-        }
- 
-        for (uint256 i = 0; i < 156; i = i + 6) {
-            for (uint256 j = i; j < i + 6; j++) {
-                num += 2**temp1 * mapInt2[player][j];
-                temp1--;
-            }
-            mapArray_random[player][slice_Index] = num % 52;
-            slice_Index += 1;
-            temp1 = 5;
-            num = 0;
-        }
-        return mapArray_random[player];
-}
-    function getArrayRandom(address player) public view returns (uint256[52] memory){
-        return mapArray_random[player];
-    } 
-
     
  
     function FisherYatesShuffle(address player) external{
@@ -779,6 +733,37 @@ contract BlackJack {
         ) { 
             Game_Pushed(payable(player));
         }
+    }
+ 
+    // This is phase 7
+    function Clear(address player) external {
+        require(
+            mapGamestate[player] == GameState.Clear,
+            "This user's game is not ready for the clear phase"
+        );
+        require(
+            msg.sender == casino,
+            "This function is only for casinos to use."
+        );
+
+        mapGamestate[player] = GameState.Inactive;
+    }
+
+    function getPhase7Games() public view returns (address[] memory) {
+        require(
+            msg.sender == casino,
+            "You are not permitted to access this function"
+        );
+ 
+        address[] memory phase7 = new address[](addressKeys.length);
+ 
+        for (uint256 i = 0; i < addressKeys.length; i++) {
+            if (mapGamestate[addressKeys[i]] == GameState.Clear) {
+                phase7[i] = addressKeys[i];
+            }
+        }
+ 
+        return phase7;
     }
  
     //check the total card value for player
