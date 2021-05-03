@@ -1,4 +1,3 @@
-
 import flask
 import json
 import sqlite3
@@ -52,7 +51,7 @@ def sendrp():
             jsonData = request.json
             address = jsonData["address"]
             rP1 = jsonData["rP1"]
-            rP2 = jsonData["rp2"]
+            rP2 = jsonData["rP2"]
             connection = sqlite3.connect("blackjack.db")
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM GAMEDATA WHERE [ADR] = ?",(address,))
@@ -77,7 +76,7 @@ def sendrp():
                         "Message": "You gave an incorrect rp. Please make sure both rp1 and rp2 are both 156 bits each."
                     }
                     return jsonify(body),400
-                elif len(dbData[4]) != 0:
+                elif len(dbData[5]) != 0:
                     body = {
                         "Message": "You have already sent us your rp."
                     }
