@@ -51,24 +51,24 @@
 **constructor() public** - Set the casino's account address to the person who deploys the contract.
 
 **function withdrawMoney() external** - Can only call by the casino. When the withdrawMoney function is called, the casino will withdraw all the
-free ether(money that has not use to bet against users) from the smart contract. 
+free ether(money that has not to use to bet against users) from the smart contract. 
 
-**function depositMoney() external payable** - Can only call by the casino. When the depositMoney function is called, the casino will require to deposit at least 10 ether to the smart contract.
+**function depositMoney() external payable** - Can only call by the casino. When the deposit money function is called, the casino will require to deposit at least 10 ether to the smart contract.
 
 **function maxBet() public view returns (uint256)** - Return the amount of free money in the smart contract that can be used to bet against the player. This 
 the function provides important information that prevents the player from betting the amount of ether that exceeds the amount of ether in the smart contract.
 
-**function getPhase2Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players's addresses through addressKeys globe variable. The function will return an array of address that store the player's account address that reaches the Deck_shuffle phase. 
+**function getPhase2Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players' addresses through the addressKeys globe variable. The function will return an array of addresses that store the player's account address that reaches the Deck_shuffle phase. 
 
-**function getPhase3Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players's addresses through addressKeys globe variable. The function will return an array of address that store the player's account address that reaches the Car_Distribution phase.
+**function getPhase3Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players' addresses through addressKeys globe variable. The function will return an array of addresses that store the player's account address that reaches the Car_Distribution phase.
 
-**function getPhase5Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players's addresses through addressKeys globe variable. The function will return an array of address that store the player's account address that reaches the Casino_Turn phase.
+**function getPhase5Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players' addresses through addressKeys globe variable. The function will return an array of addresses that store the player's account address that reaches the Casino_Turn phase.
 
-**function getExpiredReveal() public view returns (address[] memory)** - Only the casino can call this function. This function returns the an array of player's address that exceeds the expired time of the game in the reveal phase. This can prevent player maliciously holds the game. 
+**function getExpiredReveal() public view returns (address[] memory)** - Only the casino can call this function. This function returns an array of player's addresses that exceeds the expired time of the game in the reveal phase. This can prevent players from maliciously holds the game. 
 
-**function check_winning(address player) public** - This function can only be called in the reveal phase. The function takes an player's account address as the arugment. This function will set mapGameResult to Won if player wins the game, Lost if player loses the game, Push if the game is tie.
+**function check_winning(address player) public** - This function can only be called in the reveal phase. The function takes a player's account address as the argument. This function will set mapGameResult to Won if the player wins the game, Lost if the player loses the game, Push if the game is a tie.
 
-**function getPlayerHand(address user)public view returns (uint256[12] memory)** - This function can only call by player and after car_Distribution phase. It is a getting funciton that returns player's cards.
+**function getPlayerHand(address user)public view returns (uint256[12] memory)** - This function can only call by player and after car_Distribution phase. It is a getting function that returns player's cards.
 
 **function showCasinoFirstCard() public view returns (uint256)** - This function can only be called in player_Turn phase. It returns the first card of the casino's hand.
 
@@ -76,7 +76,31 @@ the function provides important information that prevents the player from bettin
 
 **function getGameDeck() public view returns (uint256[52] memory)** - This function can only be called in the Reveal phase. It returns the game deck.
 
-**function initializeGame() external payable** - Precondition: cannot call by casino, game state must be inactive, max bet must not exceed the amount of ether in the smart contract, max bet must not exceed 0.1 ether, minimum bet must greater than the minbet. This function initialize the  mapGameDeckindex,  mapPlayer_card_num, mapCasino_card_num, player_AceCount, casino_AceCount to 0 and set the mapbet to the amount of the either that player bet. Then set mapGamestate to GameState.Deck_shuffle.
+**function initializeGame() external payable** - Precondition: cannot call by the casino, the game state must be inactive, the max bet must not exceed the amount of ether in the smart contract, the max bet must not exceed 0.1 ether, the minimum bet must greater than the min bet. Postcondition: This function initialize the mapGameDeckindex,  mapPlayer_card_num, mapCasino_card_num, player_AceCount, casino_AceCount to 0 and set the mapbet to the amount of either that player bet. Then set mapGamestate to GameState.Deck_shuffle and mapGameResult to inprogress.
+
+**function Casino_get_deck(address user, uint256[52] calldata shuffledCards, bytes32  hashed_rCom1, bytes32 hashed_rCom2) external** - This function can only call by casino. It takes user(player's account address), shuffleCard(an array of cards that pass from backend), hashed_rcom1 (hash of first 156 bit of rcom), hashed_rcom2 (hash of second 156 bit of rcom) as arguments. This function stores the argument shuffle card, hashed_rcom1, hash_rcom2 into globe variable with the user as key.
+
+**function distribute(address user) external** - This function can only call by the casino and in the game phase of Car_Distribution. This function distributes two cards from the game deck to the casino. Then the function distributes another two cards from the game deck to the player. It also stores the number of the ace in player_AceCount. The function directly jumps to the reveal phrase if the total value of player's cards reaches 21 or the total value of casino's cards reaches 21 or both total value of player and casino reach 21. Else, the game state is set to Player_Turn.
+
+**function Player_Hit(address player) external** - This function cannot call by the casino and can only be called in player_Turn phase. This function adds a card to the player's hand and update the deck index (deck index determines which card to be pop). When the total value of the player's cards above 21 (bust), the game state will set to reveal phase.
+
+**function Stand() external** - This function cannot call by the casino and can only be called in the player_Turn phase. This function set game state to Casino_Turn.
+
+**function Casino_Hit(address player) private** - This function can only be called in casino_turn phase. Since it is private, it cannot call by player. This function adds one card to the casino's hand.
+
+**function Casino_Turn(address Player) external** - This function can only call by the casino and can only be called in casino_turn. It repeatedly calls casino_hit function until the total value of the casino's cards greater or equal to 17. The game state will be set into the Reveal phase after this function call.
+
+**function FisherYatesShuffle(address player) external** - This function takes the rfy(xor of rcom and rp) and generates an array of random numbers in size 52. Then, the function creates a deck with these random numbers. 
+
+**function CheckPlayerCasinoCard(address player) private returns (bool)** - This function reconstructs the used deck with casino's cards and player's cards and compares the reconstructed deck with the shuffled deck to check for cheating.
+
+**function getShuffle1(address player, string calldata rCom1, string calldata rP1) external returns (uint256[] memory)** - This function can only be called in reveal phase and hash(rCom1) must equal to map_rCom1_hash. This function will generate the first half (156 bit) of xor operation between rcom and rp.
+
+**function getShuffle2(address player, string calldata rCom2, string calldata rP2) external returns (uint256[] memory)** - This function can only be called in reveal phase and hash(rCom2) must equal to map_rCom2_hash. This function will generate the second half (156 bit) of xor operation between rcom and rp.
+
+
+
+
 
 
 
