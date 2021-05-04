@@ -90,7 +90,7 @@ the function provides important information that prevents the player from bettin
 
 **function Casino_Turn(address Player) external** - This function can only call by the casino and can only be called in casino_turn. It repeatedly calls casino_hit function until the total value of the casino's cards greater or equal to 17. The game state will be set into the Reveal phase after this function call.
 
-**function FisherYatesShuffle(address player) external** - This function takes the rfy(xor of rcom and rp) and generates an array of random numbers in size 52. Then, the function creates a new deck and use the 52 random numbers to perform Fisher-Yates shuffling algorithm on he new deck. 
+**function FisherYatesShuffle(address player) external** - This function takes the rFy1 & rFy2(XOR of rCom1&rP1, rCom2&rP2) and generates an array of random numbers in size 52. Then, the function creates a new deck and use the 52 random numbers to perform Fisher-Yates shuffling algorithm on he new deck to reproduce the game deck that was passed in during the initializeGame phase. 
 
 **function CheckPlayerCasinoCard(address player) private returns (bool)** - This function reconstructs the used deck with casino's cards and player's cards and compares the reconstructed deck with the shuffled deck returned by the FisherYatesShuffle function above to make sure the game deck has the same order as the shuffled deck. If both decks have the same order, that means the deck wasn't tampered & we can proceed with the Payout phase, otherwise, cheating is detected. 
 
