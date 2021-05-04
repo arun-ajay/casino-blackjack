@@ -20,7 +20,7 @@ The follow steps below demonstrates the complete process of setting up and compi
 16. You should be seeing the test result 😊.
 
 
-Please refer to our report for more details regrading each test cases. 
+Please refer to our report for more details regrading each test cases. <br />
 Learn more about truffle fream work and truffle-assertion package:
 https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-solidity
 https://github.com/rkalis/truffle-assertions
