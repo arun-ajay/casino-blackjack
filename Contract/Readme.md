@@ -4,7 +4,7 @@
 
 **enum GameState {Inactive, Deck_shuffle, Car_Distribution, Player_Turn, Casino_Turn, Reveal, Clear}** - GameState disallows user or casino process to next state before the previous state is finished. In the Inactive phase, the player needs to call the initializeGame() function to initialize the game. In the Deck_suffle phase, Deck is waiting to be shuffle. In car_Distribution phase, the card is waiting to be distributed. In player_Turn phase, the player can either choose to hit or stand. In casino_Turn phase, the casino keeps hitting until the value of the cards exceeds 17. In Reveal phrase, cheating is determined through hashing scheme and the transaction is made according to the result. In Clear phase, everything is reseted and prepare for the new game.
 
-**enum GameResult {None, InProgress, Won, Lost, Push}** - Enum stores the game result after the game is completed. The game result will be applied to the front end.
+**enum GameResult {None, InProgress, Won, Lost, Push}** - Enum stores the game result after the check_winning function is called. The game result will be applied to the front end.
 
 **mapping(address => uint256[12]) private mapPlayer_card** - Mapping between the player's account address and the player's cards. The maximum number of the card will be 12 because holding more than 12 cards will cause the total value to exceed 24.
 
