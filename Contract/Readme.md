@@ -98,6 +98,15 @@ the function provides important information that prevents the player from bettin
 
 **function getShuffle2(address player, string calldata rCom2, string calldata rP2) external returns (uint256[] memory)** - This function can only be called in reveal phase and hash(rCom2) must equal to map_rCom2_hash. This function will generate the second half (156 bit) of xor operation between rcom and rp.
 
+**function Payout(address player) external** - This function can only be called in the reveal phase. The cheating will be check with a commitment scheme. If the newly generated deck is the same as the old deck that was used in the game, the test pass. else, the cheating is detected. These functions will either call Player_Win or Casino_Win or Game_Pushed. Determine the result of the game.
+
+**function Clear(address player) external** - This function can only call by the casino and can only be called in the clear phase. It sets the game state to inactive.
+
+**function getPhase7Games() public view returns (address[] memory)** - This function can only call by casino. It returns all the player's account address that reaches the Clear phase.
+
+**function Player_check(address player) private view returns (uint256)** - Return the total value of player's cards with player's account address as argument.
+
+**function Casino_check(address player) private view returns (uint256)** - Return the total value of casino's cards with player's account address as argument (each player has corresponding casino's cards through mapping).
 
 
 
