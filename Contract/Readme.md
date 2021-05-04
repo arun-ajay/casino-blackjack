@@ -76,7 +76,10 @@ the function provides important information that prevents the player from bettin
 
 **function getGameDeck() public view returns (uint256[52] memory)** - This function can only be called in the Reveal phase. It returns the game deck.
 
-**function initializeGame() external payable** -
+**function initializeGame() external payable** - Precondition: cannot call by casino, game state must be inactive, max bet must not exceed the amount of ether in the smart contract, max bet must not exceed 0.1 ether, minimum bet must greater than the minbet. This function initialize the  mapGameDeckindex,  mapPlayer_card_num, mapCasino_card_num, player_AceCount, casino_AceCount to 0 and set the mapbet to the amount of the either that player bet. Then set mapGamestate to GameState.Deck_shuffle.
+
+
+
 
 
 
