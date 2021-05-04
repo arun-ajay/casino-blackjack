@@ -57,3 +57,29 @@ free ether(money that has not use to bet against users) from the smart contract.
 
 **function maxBet() public view returns (uint256)** - Return the amount of free money in the smart contract that can be used to bet against the player. This 
 the function provides important information that prevents the player from betting the amount of ether that exceeds the amount of ether in the smart contract.
+
+**function getPhase2Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players's addresses through addressKeys globe variable. The function will return an array of address that store the player's account address that reaches the Deck_shuffle phase. 
+
+**function getPhase3Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players's addresses through addressKeys globe variable. The function will return an array of address that store the player's account address that reaches the Car_Distribution phase.
+
+**function getPhase5Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players's addresses through addressKeys globe variable. The function will return an array of address that store the player's account address that reaches the Casino_Turn phase.
+
+**function getExpiredReveal() public view returns (address[] memory)** - Only the casino can call this function. This function returns the an array of player's address that exceeds the expired time of the game in the reveal phase. This can prevent player maliciously holds the game. 
+
+**function check_winning(address player) public** - This function can only be called in the reveal phase. The function takes an player's account address as the arugment. This function will set mapGameResult to Won if player wins the game, Lost if player loses the game, Push if the game is tie.
+
+**function getPlayerHand(address user)public view returns (uint256[12] memory)** - This function can only call by player and after car_Distribution phase. It is a getting funciton that returns player's cards.
+
+**function showCasinoFirstCard() public view returns (uint256)** - This function can only be called in player_Turn phase. It returns the first card of the casino's hand.
+
+**function getCasinoHand() public view returns (uint256[12] memory)** - This function can only be called in the Reveal phase. It returns the casino's cards.
+
+**function getGameDeck() public view returns (uint256[52] memory)** - This function can only be called in the Reveal phase. It returns the game deck.
+
+**function initializeGame() external payable** -
+
+
+
+
+
+
