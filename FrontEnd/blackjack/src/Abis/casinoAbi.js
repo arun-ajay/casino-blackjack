@@ -53,6 +53,32 @@ export const casinoAbi = [
 				"type": "address"
 			}
 		],
+		"name": "Clear",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			}
+		],
+		"name": "FisherYatesShuffle",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			}
+		],
 		"name": "Payout",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -235,6 +261,19 @@ export const casinoAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getPhase7Games",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -381,57 +420,9 @@ export const casinoAbi = [
 				"internalType": "address",
 				"name": "",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
 			}
 		],
-		"name": "mapInt1",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "mapInt2",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "map_rCom1",
+		"name": "map_rCom1_hash",
 		"outputs": [
 			{
 				"internalType": "bytes32",
@@ -450,7 +441,7 @@ export const casinoAbi = [
 				"type": "address"
 			}
 		],
-		"name": "map_rCom2",
+		"name": "map_rCom2_hash",
 		"outputs": [
 			{
 				"internalType": "bytes32",

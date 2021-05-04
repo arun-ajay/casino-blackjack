@@ -8,22 +8,33 @@ const Modal=(props)=> {
        const [userDeck, setUserDeck]=useState([])
        const [shuffledDeck, setShuffledDeck]=useState([])
        const [binaryArray, setBinaryArray]=useState([])
-       const [cardIndex, setCardIndex]=useState(0)
+       const [cardIndex, setCardIndex]=useState(51)
        const [binary, setBinary]=useState(0)
+       const [count, setCount]=useState(0)
+     //   const [tempValue, setTempValue]=useState(0)
 
        const [timesRan, setTimesRan]=useState(0)
        const [shouldAutoShuffle, setShouldAutoShuffle]=useState(false)
        const [showShuffledArray, setShowShuffledArray]=useState(false)
+       const [startOfShuffle, setStartOfShuffle]=useState(false)
+       const [doneShuffling, setDoneShuffling]=useState(false)
+       const [dealerCards, setDealerCards]=useState([])
+       const [userCards, setUserCards]=useState([])
 
        const [finalDeck, setFinalDeck]=useState([])
 
        const questionMark = (showShuffledArray === false)? '???': null
-
+          const link = `https://ropsten.etherscan.io/address/${props.link}`
 
        useEffect(()=>{
-              setDeck()
-              getBinary()
+               setDeck()
+               getBinary()
+               setDealerCards(props.dealerHand)
+               setUserCards(props.userHand)
        },[])
+       useEffect(()=>{
+          
+          },[cardIndex])
 
        useEffect(()=>{
               if(shouldAutoShuffle){
@@ -32,7 +43,7 @@ const Modal=(props)=> {
                      }, 100)
               }
 
-              if(cardIndex === 51){
+              if(cardIndex === 0){
                      setShouldAutoShuffle(false)
                      setShowShuffledArray(true)
                      let deck = getProperties(userDeck)
@@ -47,71 +58,79 @@ const Modal=(props)=> {
               for (var i=0; i<52; i++){
                      deck.push(i)
               }
-              setCardIndex(0)
               setUserDeck(deck)
-
-              let shuff = shuffle([...deck])
-              setShuffledDeck(shuff)
        }
 
        const beginShuffle=()=>{
+               setStartOfShuffle(true)
               setShouldAutoShuffle(true)
        }
 
-       const next=()=>{
-              console.log('trying')
+
+       const next=async ()=>{
               var newArr = [...userDeck]
-              let decimalValue = (parseInt(binaryArray[cardIndex], 2))
-              
-              if (decimalValue < 51){
-                     [newArr[cardIndex], newArr[decimalValue]]=[newArr[decimalValue], newArr[cardIndex]]
-              }else{
-                     [newArr[cardIndex], newArr[(decimalValue % 51)]]=[newArr[(decimalValue % 51)], newArr[cardIndex]]
+
+              if(cardIndex >= 0){
+                    setCardIndex((curr)=>curr -1)
+                    var randomIndex = shuffledDeck[count]
+                    var tempValue = newArr[cardIndex]
+                    newArr[cardIndex] = newArr[randomIndex]
+                    newArr[randomIndex] = tempValue 
+                    setCount((curr)=>curr + 1)
               }
 
               setUserDeck(newArr)
-
-
-              if (cardIndex <= userDeck.length-1){
-                     setCardIndex((curr)=>curr + 1)
-              } else{
-                     setCardIndex(0)
-              }
        }
-       const shuffle=(array)=> {
-              var currentIndex = array.length, temporaryValue, randomIndex;
-            
-              // While there remain elements to shuffle...
-              while (0 !== currentIndex) {
-            
-                // Pick a remaining element...
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex -= 1;
-            
-                // And swap it with the current element.
-                temporaryValue = array[currentIndex];
-                array[currentIndex] = array[randomIndex];
-                array[randomIndex] = temporaryValue;
-              }
-            
-              return array;
-            }
+
+       const shuffleCards=(shuffleArray)=>{
+          let deck = []
+   
+          for(var i=0; i<52;i++){
+                 deck.push(i)
+          }
+   
+          var currentIndex = 52
+          var count= 0
+          var temporaryValue = 0
+   
+          while(currentIndex != 0){
+               currentIndex = currentIndex - 1
+               var randomIndex = shuffleArray[count]
+               temporaryValue = deck[currentIndex]
+               deck[currentIndex] = deck[randomIndex]
+               deck[randomIndex] = temporaryValue
+               count += 1
+   
+          }
+          return deck
+   }
+
 
        const getBinary=()=>{
-              let chunks = chunkSubstr('1110011100111110101100000010010011001001000001000111100000001100100000000000100010110000010110110010010110011001011101110101000010110010101111000001000101101011100011010111011011000110000011011111101110000010001011000111101101101101000011111001100110010111000100010100001110000011111000100010011100000111011001', 6)
-              setBinaryArray(chunks)
-       }
 
-       function chunkSubstr(str, size) {
-              const numChunks = Math.ceil(str.length / size)
-              const chunks = new Array(numChunks)
-              const chunksDec = new Array()
-              for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-                chunks[i] = str.substr(o, size)
+               var rFyBuild = []
 
-              }
-            
-              return chunks
+               let rCom1 = props.rCom1
+               let rCom2 = props.rCom2
+               let rP1 = props.rP1
+               let rP2 = props.rP2
+               var rD = rCom1 + rCom2
+               var rP = rP1 + rP2
+
+               for(var i=0; i<312; i++){
+                    if (rD[i] === rP[i]){
+                          rFyBuild.push("0")
+                    }else{
+                          rFyBuild.push("1")
+                    }
+               }
+
+               let rFy = rFyBuild.join('')
+               let binaryList = rFy.match(/.{6}/g)
+               setBinaryArray(binaryList)
+               let shuffleList = BinaryToDec(binaryList)
+              let tempShuffledDeck = shuffleCards(shuffleList)
+          //     setShuffledDeck(tempShuffledDeck)
        }
 
        const BinaryToDec =(array)=>{
@@ -124,7 +143,8 @@ const Modal=(props)=> {
                             newArr.push(parseInt(array[i], 2))
                      }
               }
-              setBinary(newArr)
+              setShuffledDeck(newArr)
+              return newArr
        }
 
 
@@ -175,7 +195,8 @@ const Modal=(props)=> {
            </div>
            <div className="box">
 
-              <div id="deckHeader">Initial Array:</div>
+              {(startOfShuffle)?<div id="deckHeader">Shuffling Array...</div>:<div id="deckHeader">Initial Array:</div>}
+              {/* {(showShuffledArray)?<div id="deckHeader">Shuffled Array!</div>:null} */}
               <div className="deck1">
                      {(userDeck)?userDeck.map((card, index)=>
                      <div style={index === cardIndex ? { border: '1px solid red', margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}> [ {card} ]</div>
@@ -188,16 +209,6 @@ const Modal=(props)=> {
                      <div style={index === cardIndex ? { border: '1px solid red', margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}>{binary}</div>
                      ):null} 
               </div>
-
-              <div id="binaryHeader">Shuffled Array: {questionMark}</div>
-              <div className="deck1">
-                     {(showShuffledArray)?userDeck.map((card, index)=>
-                     <div style={index === cardIndex ? { margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}>{card}</div>
-                     ):null}
-              </div>
-              <div>
-              =
-              </div>
               {(showShuffledArray)?<div className="bottomWrapper">
                      <div id="binaryHeader">
                      Full Deck
@@ -209,8 +220,8 @@ const Modal=(props)=> {
                      <div className="hands-section">
                             <div id="handHeaders">
                                    Dealer's Hand:
-                                   <div id="userHandModal">
-                                          Put dealer's cards here
+                                   <div id="dealerHandModal">
+                                   {finalDeck? dealerCards.map((card, index)=> (<Card number={card.value} suit={card.suit} color={card.color} type='small'/>)): null}
                                    </div>
                             </div>
                             <div id="verticalBar">
@@ -218,13 +229,14 @@ const Modal=(props)=> {
                             </div>
                             <div id="handHeaders">
                                    Your Hand:
-                                   <div id="dealerHandModal">
-                                          Put dealer's cards here
+                                   <div id="userHandModal">
+                                        {finalDeck? userCards.map((card, index)=> (<Card number={card.value} suit={card.suit} color={card.color} type='small'/>)): null}
                                    </div>
                             </div>
                      </div>
                      <div id="ropstenLink">
-                     https://ropsten.etherscan.io/address/0x89ac09d3edeb174217589485d518f1ea8be0d110
+                          <p>Your smart contract's etherscan: </p>
+                         <a href={link} target="_blank">https://ropsten.etherscan.io/address/{props.link}</a>
                      </div>
               </div>:null}
               <div className="buttons">

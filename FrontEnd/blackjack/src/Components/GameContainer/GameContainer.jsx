@@ -1,4 +1,4 @@
-import React, {Props, useState} from 'react'
+import React, {Props, useState, useEffect} from 'react'
 import Controls from '../Controls/Controls'
 import Card from '../Card/Card'
 import Prompt from '../Prompt/Prompt'
@@ -11,6 +11,7 @@ import background from '../../Assets/blackjack_table.jpeg'
 import Instructions from '../Instructions/Instructions'
 import Loader from 'react-loader-spinner'
 import Modal from '../Modal/Modal'
+import GameInfo from '../GameInfo/GameInfo'
 import {casinoAbi} from '../../Abis/casinoAbi'
 import {smartContractAddress} from '../../Config/config'
 import {getrcom, sendrp, gethash} from '../../Utils/api'
@@ -38,7 +39,11 @@ const GameContainer=(Props)=> {
        const [dealerCards, setDealerCards]= useState([])
        const [dealerScore, setDealerScore]= useState(0)
 
-       const [rP, setRP]=useState('')
+       const [rP1, setRP1]=useState('')
+       const [rP2, setRP2]=useState('')
+
+       const [rCom1, setRCom1]=useState('')
+       const [rCom2, setRCom2]=useState('')
 
        const [balance, setBalance]= useState(100)
        const [bet, setBet]= useState(0)
@@ -61,6 +66,13 @@ const GameContainer=(Props)=> {
 
        const [showModal, setShowModal]=useState(false)
 
+       const [showRP, setShowRP]=useState(false)
+
+       const [showFinalPayout, setShowFinalPayout]=useState(false)
+
+       const [patienceAlert, setPatienceAlert]=useState('Please be patient with us while we audit your game data to detect cheating.')
+       const [showPatienceAlert, setShowPatienceAlert]=useState(false)
+
        //GRANT METAMASK ACCESS
        const grantAccess=async (e)=>{
               e.preventDefault();
@@ -78,37 +90,49 @@ const GameContainer=(Props)=> {
               }
 
        }
+
+     //   useEffect(()=>{
+     //      console.log(rCom1, rCom2)
+     //   }, [rCom1, rCom2])
             
-       const generateRandomBinary=()=>{
-              let randomOne = randomBinary(156)
-              let randomTwo = randomBinary(156)
-              let finalRandom = randomOne + randomTwo
+     //   const generateRandomBinary=()=>{
+     //          let randomOne = randomBinary(156)
+     //          let randomTwo = randomBinary(156)
 
-              setRP(finalRandom)
-       }
+     //          setRP1(randomOne)
+     //          setRP2(randomTwo)
+     //   }
 
-       const getRCOM = (userAddress)=>{
+       const getRCOM = async (userAddress)=>{
               //address should be string
-              let body = {"address":userAddress}
-
-              getrcom(body)
-              .then((response)=>{
-                     console.log(response.data.rcom)
-              })
-              .catch((error)=>{
+               let body = {"address": userAddress}
+               let data = null
+               await getrcom(body)
+               .then((response)=>{
+                     setRCom1(()=>response.data.rCom1)
+                     setRCom2(()=>response.data.rCom2)
+                     data = response.data
+                     
+               })
+               .catch((error)=>{
                      console.log(error)
-              })    
+               })    
+
+              return data
        }
        
-       const sendRP=(userAddress, rP)=>{
-              let body = {"address":userAddress, "rp": rP }
+       const sendRP=async (userAddress, rPOne, rPTwo)=>{
+              let body = {"address":userAddress, "rP1": rPOne, "rP2": rPTwo }
 
               sendrp(body)
               .then((response)=>{
                      console.log(response)
               })
+              .then(()=>{
+                    setShowRP((curr)=>!curr)
+              })
               .catch((error)=>{
-                     console.log(error)
+                     console.log(error.message)
               })
        }
 
@@ -152,7 +176,7 @@ const GameContainer=(Props)=> {
                      console.log('reveal phase')
                      monitorPhase5Status()
                      setUserAlert('')
-                     getGameResult()
+                    //  getGameResult()
                      setCasinoTurn(true)
                      setTogglePayout(true)
               }
@@ -199,7 +223,7 @@ const GameContainer=(Props)=> {
 
 
        const stand=async ()=>{
-              setUserAlert('')
+              setUserAlert('Standing...')
               console.log('Standing...')
               try{
                      await casinoContract.methods.Stand().send({from: userAddress, to: casinoContractAddress})
@@ -262,13 +286,12 @@ const GameContainer=(Props)=> {
        //PHASE ONE - initialize game
        const initiatePhaseOne= async (bet)=>{
               setUserAlert('Submitting your bet...')
-              generateRandomBinary()
               console.log('BEGIN PHASE ONE...')
               try{
                      await casinoContract.methods.initializeGame().send({from: userAddress, to: casinoContractAddress, value: web3.utils.toWei(bet.toString())})
-                     sendRP(userAddress, rP)
-                     setUserAlert('Sending randomly generated binary bits (rP)...')
+                    //  sendRP(userAddress, rP1, rP2)
                      await new Promise(resolve => setTimeout(resolve, 1000));
+                    console.log('trying to send RP')
                      console.log('initialized game - PHASE ONE, CLEAR.')
                      toggleShowBetInput()
                      setUserAlert('Casino is shuffling cards and distributing them...')
@@ -355,37 +378,65 @@ const GameContainer=(Props)=> {
               getCardValues(tempDeck, 'casino')
        }
 
+       const handleRP=async (adr)=>{
+          let randomOne = randomBinary(156)
+          let randomTwo = randomBinary(156)
+
+          setRP1(randomOne)
+          setRP2(randomTwo)
+
+          setUserAlert('Sending randomly generated binary bits (rP1 & rP2) to assist in your deck shuffle...')
+          let response = await sendRP(adr, randomOne, randomTwo)
+       }
+
 
 
        const monitorPhase3Status=async ()=>{
               const timer = ms => new Promise(res => setTimeout(res, ms))
-              var gamePhase = getGameState()
+              await timer(5000)
+              var gamePhase = await getGameState()
+              console.log('this is the gamePhase: ', gamePhase)
+              if(gamePhase === '1'){
+                    setShowRP(()=>true)
+                    await timer(2000)
+               }
               while(gamePhase !== '3'){
+                   console.log('starting while loop: ')
+                   console.log(gamePhase)
                      var gamePhase = await getGameState()
-                     console.log("GAME_PHASE:", gamePhase)
-                     await timer(5000)
+                     if(gamePhase === '5'){
+                         monitorPhase5Status()
+                         console.log('Game Over. Phase 5')
+                         setRevealPhase(true)
+                         setCasinoTurn(true)
+                         getPlayerDeck()
+                         setUserAlert('')
+                         setTogglePayout(true)
+                    }
+                     await timer(2000)
               }
+              
               if(gamePhase === '3'){
                      console.log(`It's your turn. Choose hit or stand.`)
                      setUserTurn(!userTurn)
                      await initiatePhaseThree()
               }
-              if(gamePhase === '5'){
-                     monitorPhase5Status()
-                     console.log('Game Over. Phase 5')
-                     setRevealPhase(true)
-                     setCasinoTurn(true)
-                     getPlayerDeck()
-                     setUserAlert('')
-                     getGameResult()
-                     setTogglePayout(true)
-              }
+          //     if(gamePhase === '5'){
+          //            monitorPhase5Status()
+          //            console.log('Game Over. Phase 5')
+          //            setRevealPhase(true)
+          //            setCasinoTurn(true)
+          //            getPlayerDeck()
+          //            setUserAlert('')
+          //            setTogglePayout(true)
+          //     }
        }
 
        const monitorPhase5Status=async()=>{
               const timer = ms => new Promise(res => setTimeout(res, ms))
-              var gamePhase = getGameState()
-
+              var gamePhase = await getGameState() //just changed this.
+              //CHECK THIS!!!
+               console.log(gamePhase)
               while(gamePhase != '5'){
                      var gamePhase = await getGameState()
                      console.log("GAME_PHASE:", gamePhase)
@@ -396,24 +447,62 @@ const GameContainer=(Props)=> {
                      let deck = getProperties(casinoHand)
                      setRevealPhase(true)
                      setDealerCards(deck)
-                     setUserAlert('')
-                     getGameResult()
+                     setUserAlert('Game Over. Please initiate deck reconstruction for cheat detection.')
+
+                    //  getGameResult()
                      setTogglePayout(true)
               }
        }
 
        const payout = async()=>{
+          try{
+               console.log('trying payout')
+               setUserAlert('Paying out.')
+               const payout = await casinoContract.methods.Payout(userAddress).send({from: userAddress, to: casinoContractAddress})
+               setUserAlert('Payout finished. Please wait while we clear your data.')
+          }catch(error){
+               console.log(error)
+          }
+       }
+
+       const reConstruct = async()=>{
+
               try{
-                     setUserAlert('Paying out.')
-                     await casinoContract.methods.Payout(userAddress).send({from: userAddress, to: casinoContractAddress})
-                     console.log("Sucessfully payed out.")
-                     setUserAlert('Payout finished. New game in 5 seconds...')
+                    let data = await getRCOM(userAddressCheckSum)
+                    setUserAlert('Reconstructing your deck for cheat detection.')
+                    setShowPatienceAlert(()=>true)
+
+                    try{
+                         console.log('trying get shuffle 1')
+                         setUserAlert('Calling Shuffle One, Sending rCom1 & rP1')
+                         const shuffle1 = await casinoContract.methods.getShuffle1(userAddressCheckSum, data.rCom1, rP1).send({from: userAddress, to: casinoContractAddress})
+                    }catch(error){
+                         console.log(error)
+                    }
+
+                    try{
+                         console.log('trying get shuffle 2')
+                         setUserAlert('Calling Shuffle Two, sending rCom2, rP2')
+                         const shuffle2 =await casinoContract.methods.getShuffle2(userAddressCheckSum, data.rCom2, rP2).send({from: userAddress, to: casinoContractAddress})
+                    }catch(error){
+                         console.log(error)
+                    }
+
+                    try{
+                         console.log('trying SC fisher yates')
+                         setUserAlert('Re-Shuffling using fisher-yates shuffle algorithm with rCom1, rCom2, rP1, and rP2 .')
+                         const fisherYates = await casinoContract.methods.FisherYatesShuffle(userAddressCheckSum).send({from: userAddress, to: casinoContractAddress})
+                         await getGameResult()
+                         setShowPatienceAlert(()=>false)
+                         setUserAlert('Everything seems to be ok. Call payout for a payout.')
+                         setShowFinalPayout(()=>true)
+                    }catch(error){
+                         console.log(error)
+                    }
+                    
               }catch(error){
-                     console.log(error)
+                    console.log(error)
               }
-              const timer = ms => new Promise(res => setTimeout(res, ms))
-              await timer(5000)
-              window.location.reload()
        }
 
        //PHASE FOUR - Player's turn. Hit or stand
@@ -458,20 +547,22 @@ const GameContainer=(Props)=> {
                                           <div className={styles.game}>
                                                  {(showBetInput)?<div className={styles.message}>Please submit your bet to start the game.</div>:null}
                                                  {(gameResult != '')?<Prompt message={gameResult}/>: null}
-
+                                                 {/* <GameInfo /> */}
                                                  {(userAlert && userAlert != 'Choose again')?<div id={styles.userAlert}>
                                                         {(userAlert != 'Bet submission cancelled. Please resubmit your bet.')?<Loader type="Oval" color="#00BFFF" height={35} width ={35} />:null}
                                                         <Prompt message={userAlert}/>
                                                  </div>:<Prompt message={userAlert}/>}
+                                                 {(showPatienceAlert)?<Prompt message={patienceAlert}/>: null}
 
                                                  <DealerHand deckData={dealerCards} revealPhase={revealPhase}/>
                                                  <UserHand deckData={userCards}/>
-                                                 {(userTurn)?<Controls triggerHit={hit} triggerStand={stand} payout={payout} showPayout={togglePayout} casinoTurn={casinoTurn} showModal={()=>setShowModal(!showModal)}/>:null}
+                                                 {showRP?<button onClick={()=>handleRP(userAddressCheckSum)}>send RP</button>:null}
+                                                 {(userTurn)?<Controls triggerHit={hit} triggerStand={stand} reConstruct={reConstruct} finalPayout={payout} showPayout={togglePayout} showFinalPayout={showFinalPayout} casinoTurn={casinoTurn} showModal={()=>setShowModal(!showModal)}/>:null}
                                           </div>
                                    </div> 
                             </div>
                             {(showModal)?<div className={styles.modalWrapper}>
-                                   <Modal closeModal={()=>setShowModal(!showModal)}/> 
+                                   <Modal closeModal={()=>setShowModal(!showModal)} rCom1={rCom1} rCom2={rCom2} rP1={rP1} rP2={rP2} userHand={userCards} dealerHand={dealerCards} link={smartContractAddress}/> 
                             </div>: null}
                             <div className={styles.credits}>
                                           <div className={styles.names}>Arun Ajay</div>
@@ -480,7 +571,6 @@ const GameContainer=(Props)=> {
                                           <div className={styles.names}>Chengliang Tan</div>
                                           <div className={styles.names}>Lihan Zhan</div>
                                           <div className={styles.names}>Hong Fei Zheng</div>
-                                          <button onClick={getHASH(userAddressCheckSum)}>getHash</button>
                             </div>
                      </div>
               )
