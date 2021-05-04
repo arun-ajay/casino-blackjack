@@ -21,7 +21,7 @@ The follow steps below demonstrates the complete process of setting up and compi
 
 
 Please refer to our report for more details regrading each test cases. <br />
-Learn more about truffle fream work and truffle-assertion package:
-https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-solidity
-https://github.com/rkalis/truffle-assertions
-https://kalis.me/assert-reverts-solidity-smart-contract-test-truffle/
+Learn more about truffle fream work and truffle-assertion package: <br />
+https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-solidity <br />
+https://github.com/rkalis/truffle-assertions <br />
+https://kalis.me/assert-reverts-solidity-smart-contract-test-truffle/ 
