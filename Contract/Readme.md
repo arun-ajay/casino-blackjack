@@ -48,3 +48,4 @@
 
 **uint256 public expireTime = 1** - The amount of time before the game is automatically resolved.
 
+**constructor() public** - Set the casino's account address to the person who deploys the contract.
