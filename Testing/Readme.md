@@ -12,13 +12,14 @@ The follow steps below demonstrates the complete process of setting up and compi
 8. Change your directory in your terminal to the folder created in step 8 (type: cd folder_name in the terminal)
 9. In terminal, type: truffle init, this command should initialize a folder for testing contracts
 10. Open the folder that you created in step 7, copy and paste “truffle-config.js” to this folder. 
-11. Open the folder that you created in step 7, you should see a folder called “test”, copy and paste all of our files our “BlackJack_Testing.js” to this folder
-12. Open the folder that you created in step 7, you should see a folder called “contract”, copy and paste our “BlackJack_Testing.sol” to this folder
-13. Open the folder that you created in step 7, copy and paste our "truffl-config.js" file to the folder that you created, when alert prompt, click "Replace".
-14. Open the folder that you created in step 7, go to "Migrations" folder, copy in "migration_coinflip.js" into this folder.
-15. In terminal, type: truffle compile, this command will compile all smart contracts within the current folder.
-16. In terminal, type: truffle test
-17. You should be seeing the test result 😊.
+11. Open the folder that you created in step 7, you should see a folder called “test”, copy and paste all of our files in the "Test Script" folder on github to this folder
+12. Open the folder that you created in step 7, you should see a folder called “migrations”, copy and paste "1_initial_migration.js" and "2_black_jack_testing.js" to this folder
+13. Open the folder that you created in step 7, you should see a folder called “contract”, copy and paste our “BlackJack_Testing.sol” to this folder
+14. Open the folder that you created in step 7, copy and paste our "truffl-config.js" file to the folder that you created, when alert prompt, click "Replace".
+15. Open the folder that you created in step 7, go to "Migrations" folder, copy in "migration_coinflip.js" into this folder.
+16. In terminal, type: truffle compile, this command will compile all smart contracts within the current folder.
+17. In terminal, type: truffle test
+18. You should be seeing the test result 😊.
 
 
 Learn more about truffle-assertion package:
