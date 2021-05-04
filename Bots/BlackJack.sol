@@ -18,7 +18,7 @@ contract BlackJack {
     enum GameResult {None, InProgress, Won, Lost, Push}
  
     //Player Hand
-    mapping(address => uint256[12]) private mapPlayer_card;
+    mapping(address => uint256[12]) public mapPlayer_card;
     //Casino Hand
     mapping(address => uint256[12]) private mapCasino_card;
  
@@ -569,6 +569,7 @@ contract BlackJack {
             count++;
         }  
         mapShuffled_Deck[player] = newDeck;
+        check_winning(player);
  
  
     }
@@ -703,6 +704,7 @@ contract BlackJack {
         return array_Binary1;
  
     }
+    
  
     // This is phase 6
     function Payout(address player) external {
