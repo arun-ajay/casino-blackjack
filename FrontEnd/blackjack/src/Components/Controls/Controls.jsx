@@ -8,6 +8,7 @@ const Controls=(Props)=> {
 
        const checkTurnHit = Props.casinoTurn? styles.casinoTurn : styles.hit
        const checkTurnStand = Props.casinoTurn? styles.casinoTurn : styles.stand
+       const checkPayout = Props.showFinalPayout? styles.finalPayout: styles.detectCheating
 
        return (
               <div className={styles.controlsContainerWrapper}>
@@ -18,12 +19,15 @@ const Controls=(Props)=> {
                             <div className={checkTurnStand} onClick={Props.triggerStand}>
                                    Stand
                             </div>
-                            {(Props.showPayout)?<div className={styles.hit} onClick={Props.payout}>
+                            {(Props.showPayout)?<div className={checkPayout} onClick={Props.reConstruct}>
+                                   Detect cheating
+                            </div>:null}
+                            {(Props.showFinalPayout)?<div className={styles.hit} onClick={Props.finalPayout}>
                                    Payout
                             </div>:null}
                             
                      </div>
-                     {(Props.showPayout)?<div id={styles.seeHow}onClick={Props.showModal}>
+                     {(Props.showFinalPayout)?<div id={styles.seeHow}onClick={Props.showModal}>
                             See how your game works under the hood.
                      </div>:null}
               </div>
