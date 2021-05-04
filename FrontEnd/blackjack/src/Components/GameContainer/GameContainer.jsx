@@ -16,6 +16,8 @@ import {casinoAbi} from '../../Abis/casinoAbi'
 import {smartContractAddress} from '../../Config/config'
 import {getrcom, sendrp, gethash} from '../../Utils/api'
 import randomBinary from 'random-binary'
+import useWindowSize from 'react-use/lib/useWindowSize'
+import Confetti from 'react-confetti'
 
 const GameContainer=(Props)=> {
 
@@ -72,6 +74,10 @@ const GameContainer=(Props)=> {
 
        const [patienceAlert, setPatienceAlert]=useState('Please be patient with us while we audit your game data to detect cheating.')
        const [showPatienceAlert, setShowPatienceAlert]=useState(false)
+
+       const [showConfetti, setShowConfetti]=useState(false)
+
+       const { width, height } = useWindowSize()
 
        //GRANT METAMASK ACCESS
        const grantAccess=async (e)=>{
@@ -157,6 +163,7 @@ const GameContainer=(Props)=> {
               try{
                      await casinoContract.methods.Player_Hit(userAddress).send({from: userAddress, to: casinoContractAddress})
                      console.log("Sucessfully hit.")
+                     console.log('calling getNewCard()...')
                      getNewCard()
               }catch(error){
                      console.log(error)
@@ -270,6 +277,7 @@ const GameContainer=(Props)=> {
                             break;
                      case '2':
                             setGameResult(`You've won!`)
+                            setShowConfetti(()=>true)
                             break;
                      case '3':
                             setGameResult(`You've lost, sorry.`)
@@ -404,15 +412,15 @@ const GameContainer=(Props)=> {
                    console.log('starting while loop: ')
                    console.log(gamePhase)
                      var gamePhase = await getGameState()
-                     if(gamePhase === '5'){
-                         monitorPhase5Status()
-                         console.log('Game Over. Phase 5')
-                         setRevealPhase(true)
-                         setCasinoTurn(true)
-                         getPlayerDeck()
-                         setUserAlert('')
-                         setTogglePayout(true)
-                    }
+                    //  if(gamePhase === '5'){
+                    //      monitorPhase5Status()
+                    //      console.log('Game Over. Phase 5')
+                    //      setRevealPhase(true)
+                    //      setCasinoTurn(true)
+                    //      getPlayerDeck()
+                    //      setUserAlert('')
+                    //      setTogglePayout(true)
+                    // }
                      await timer(2000)
               }
               
@@ -421,15 +429,15 @@ const GameContainer=(Props)=> {
                      setUserTurn(!userTurn)
                      await initiatePhaseThree()
               }
-          //     if(gamePhase === '5'){
-          //            monitorPhase5Status()
-          //            console.log('Game Over. Phase 5')
-          //            setRevealPhase(true)
-          //            setCasinoTurn(true)
-          //            getPlayerDeck()
-          //            setUserAlert('')
-          //            setTogglePayout(true)
-          //     }
+              if(gamePhase === '5'){
+                     monitorPhase5Status()
+                     console.log('Game Over. Phase 5')
+                     setRevealPhase(true)
+                     setCasinoTurn(true)
+                     getPlayerDeck()
+                     setUserAlert('')
+                     setTogglePayout(true)
+              }
        }
 
        const monitorPhase5Status=async()=>{
@@ -455,11 +463,14 @@ const GameContainer=(Props)=> {
        }
 
        const payout = async()=>{
+          const timer = ms => new Promise(res => setTimeout(res, ms))
           try{
                console.log('trying payout')
                setUserAlert('Paying out.')
                const payout = await casinoContract.methods.Payout(userAddress).send({from: userAddress, to: casinoContractAddress})
-               setUserAlert('Payout finished. Please wait while we clear your data.')
+               setUserAlert('Payout finished. Well clear your game data and refresh your game.')
+               await timer(5000)
+               window.location.reload()
           }catch(error){
                console.log(error)
           }
@@ -535,13 +546,13 @@ const GameContainer=(Props)=> {
               )
        }else{
               return (
-                     <div>
+                     <div className={styles.background}>
                             <div className={styles.gameContainer}>
                                    <div className={styles.header}>
                                           BlackJack - Team RED
                                    </div>  
                                    <div className={styles.body}>
-                                          {(showBetInput)?<div className={styles.controlPanel}>
+                                         {(showBetInput)?<div className={styles.controlPanel}>
                                                  <UserInputPanel betAmount={handleUserBet} userAddress={userAddress}/>
                                           </div>:null}
                                           <div className={styles.game}>
@@ -571,6 +582,9 @@ const GameContainer=(Props)=> {
                                           <div className={styles.names}>Chengliang Tan</div>
                                           <div className={styles.names}>Lihan Zhan</div>
                                           <div className={styles.names}>Hong Fei Zheng</div>
+                            </div>
+                            <div id={styles.confettiContainer}>
+                              {(showConfetti)?<Confetti width={width} height={height} />:null}
                             </div>
                      </div>
               )
