@@ -49,3 +49,11 @@
 **uint256 public expireTime = 1** - The amount of time before the game is automatically resolved.
 
 **constructor() public** - Set the casino's account address to the person who deploys the contract.
+
+**function withdrawMoney() external** - Can only call by the casino. When the withdrawMoney function is called, the casino will withdraw all the
+free ether(money that has not use to bet against users) from the smart contract. 
+
+**function depositMoney() external payable** - Can only call by the casino. When the depositMoney function is called, the casino will require to deposit at least 10 ether to the smart contract.
+
+**function maxBet() public view returns (uint256)** - Return the amount of free money in the smart contract that can be used to bet against the player. This 
+the function provides important information that prevents the player from betting the amount of ether that exceeds the amount of ether in the smart contract.
