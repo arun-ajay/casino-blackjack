@@ -28,7 +28,13 @@ border-top-left-radius: 15px;
        flex-direction: row;
        // border: 1px solid black;
        border-top: none;
-       min-height: 50vh;
+       min-height: 60vh;
+       min-width: 60vw;
+}
+
+#sendRPButton{
+     width: 150px;
+     cursor: pointer;
 }
 
 .grantMetaMaskButton{
@@ -79,6 +85,7 @@ border-top-left-radius: 15px;
        width: 100%;
        flex-direction: column;
        justify-content: center;
+       align-items: center;
        padding: 15px;
        background:linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('../../Assets/blackjack_table.jpeg');
        background-size: cover;
@@ -130,4 +137,22 @@ border-top-left-radius: 15px;
      position: absolute;
      top: 0;
      z-index: 1;
+}
+
+
+/* Desktops and laptops ----------- */
+@media only screen  and (min-width : 1224px) {
+     .header{
+       padding: 7px;
+       font-size: 20px;
+   }
+}
+     
+/* Large screens ----------- */
+@media only screen  and (min-width : 1824px) {
+     .header{
+          padding: 10px;
+          font-size: 24px;
+   }
+   
 }

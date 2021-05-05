@@ -11,6 +11,7 @@ const UserHand=(Props)=> {
 
        useEffect(()=>{
               setDeck(Props.deckData)
+              console.log(Props.deckData)
               setTotal(Props.deckData.reduce(function(r,{value}) {
                      var val1 = r
                      var val2 = value

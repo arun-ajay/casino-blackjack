@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Card from '../Card/Card'
 import ReactToolTip from 'react-tooltip'
 import DataTip from '../Modal/DataTip'
+import closeButton from '../../Assets/close_button.svg'
 import '../Modal/Modal.css'
 
 const Modal=(props)=> {
@@ -38,16 +39,28 @@ const Modal=(props)=> {
 
        useEffect(()=>{
               if(shouldAutoShuffle){
-                     setTimeout(()=>{
-                            next()
+                   var result = null;
+                     setTimeout(async ()=>{
+                         result = await next()
+                         if (cardIndex === 0){
+                              console.log('card index -0')
+                              console.log('this is the result: ', result)
+                              let deck = getProperties(result)
+                              console.log('this is the REAL final deck', deck)
+
+                              setFinalDeck(deck)
+                         }
                      }, 100)
               }
 
               if(cardIndex === 0){
                      setShouldAutoShuffle(false)
                      setShowShuffledArray(true)
+                     console.log('right before enters getProperties', userDeck)
                      let deck = getProperties(userDeck)
-                     setFinalDeck(deck)
+                     console.log('this is the final deck', deck)
+                     console.log('this is the result!', result)
+                    //  setFinalDeck(result)
               }
 
        },[userDeck, shouldAutoShuffle])
@@ -70,7 +83,7 @@ const Modal=(props)=> {
        const next=async ()=>{
               var newArr = [...userDeck]
 
-              if(cardIndex >= 0){
+              if(cardIndex > -1){
                     setCardIndex((curr)=>curr -1)
                     var randomIndex = shuffledDeck[count]
                     var tempValue = newArr[cardIndex]
@@ -79,7 +92,12 @@ const Modal=(props)=> {
                     setCount((curr)=>curr + 1)
               }
 
+              console.log(cardIndex)
+              console.log('this is step one', newArr)
+
               setUserDeck(newArr)
+
+              return newArr
        }
 
        const shuffleCards=(shuffleArray)=>{
@@ -137,13 +155,14 @@ const Modal=(props)=> {
               let newArr = []
               for (var i=0;i<array.length;i++){
 
-                     if(parseInt(array[i], 2) > 52){
+                     if(parseInt(array[i], 2) >= 52){
                             newArr.push((parseInt(array[i], 2)) % 52)
                      }else{
                             newArr.push(parseInt(array[i], 2))
                      }
               }
               setShuffledDeck(newArr)
+              console.log('shuffled deck: ', newArr)
               return newArr
        }
 
@@ -154,6 +173,8 @@ const Modal=(props)=> {
               for(i=0;i<hand.length;i++){
                      var suits = '♠︎ ♥︎ ♣︎ ♦︎'.split(' ')
                      var index = parseInt(hand[i])
+                     console.log('---inside getProperties---')
+                     console.log(index)
                      if(index <= 51){
                             var value = (index % 13) + 1
                             var color = (index % 2== 0)? 'red': 'black'
@@ -189,8 +210,8 @@ const Modal=(props)=> {
 
   return (
     <div className="modalContainer">
-           <div className="closeDiv" onClick={props.closeModal}>
-                  <div id="closeButton">X</div>
+           <div className="closeDiv">
+                  <img id="closeButton" src={closeButton} onClick={props.closeModal}/>
                   <div id="how-it-works" data-tip={dataTip} data-html={true}>How it works?</div>
            </div>
            <div className="box">
@@ -199,14 +220,14 @@ const Modal=(props)=> {
               {/* {(showShuffledArray)?<div id="deckHeader">Shuffled Array!</div>:null} */}
               <div className="deck1">
                      {(userDeck)?userDeck.map((card, index)=>
-                     <div style={index === cardIndex ? { border: '1px solid red', margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}> [ {card} ]</div>
+                     <div style={index === cardIndex ? { border: '1px solid red', 'box-shadow': '0 0 4px #FF003A', 'background-color': 'white', margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}> [ {card} ]</div>
                      ):null}
               </div>
 
               <div id="binaryHeader">Generated Binary String (Partitioned into 6 bits):</div>
               <div className="deckbinary">
                      {(binaryArray)?binaryArray.map((binary, index)=>
-                     <div style={index === cardIndex ? { border: '1px solid red', margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}>{binary}</div>
+                     <div style={index === cardIndex ? { border: '1px solid red', 'box-shadow': '0 0 4px #FF003A','background-color': 'white', margin: '5px', padding: '5px'}: {margin: '5px', padding: '5px'}} index={index}>{binary}</div>
                      ):null} 
               </div>
               {(showShuffledArray)?<div className="bottomWrapper">

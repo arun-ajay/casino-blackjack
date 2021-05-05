@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from '../GameInfo/GameInfo.module.scss'
-import {ReactComponent as Infographic} from '../../hashschemew3.svg'
+import {ReactComponent as Infographic} from '../../Assets/hashscheme.svg'
 const GameInfo=(props)=> {
      
      return (
@@ -19,9 +19,6 @@ const GameInfo=(props)=> {
                     <div className={styles.lines}>The casino then takes the 312 bit rFy string and splits it into groups of 6 bits. (we need 6 bits as that is enough bits to give us a value of at least 52; the deck will have 52 indexes)
                     </div>
                     <div className={styles.lines}>Now that the rFy string is split into 6 bit groups, we can take each group and generate the decimal value of the 6 bits. (i.e: '101011' = 43). This decimal value will let fisher yates shuffle algorithm know which index to shuffle with.
-                    </div>
-                    <div className={styles.lines} id={styles.point}>
-                         The entire point of this is to ensure fairness by introducing a two-party system in shuffling. It also allows us to reconstruct your deck and audit the game data to check for cheating.
                     </div>
                </div>
                <div className={styles.infographicContainer}>

@@ -12,6 +12,7 @@ import Instructions from '../Instructions/Instructions'
 import Loader from 'react-loader-spinner'
 import Modal from '../Modal/Modal'
 import GameInfo from '../GameInfo/GameInfo'
+import {ReactComponent as SendRPButton} from '../../Assets/sendRPbutton.svg'
 import {casinoAbi} from '../../Abis/casinoAbi'
 import {smartContractAddress} from '../../Config/config'
 import {getrcom, sendrp, gethash} from '../../Utils/api'
@@ -76,6 +77,8 @@ const GameContainer=(Props)=> {
        const [showPatienceAlert, setShowPatienceAlert]=useState(false)
 
        const [showConfetti, setShowConfetti]=useState(false)
+
+       const [hideInfo, setHideInfo]=useState(false)
 
        const { width, height } = useWindowSize()
 
@@ -196,6 +199,7 @@ const GameContainer=(Props)=> {
        const getCardAtIndex= async (index)=>{
               try{
                      var value = await casinoContract.methods.mapPlayer_card(userAddress, index).call({from: userAddress})
+                     console.log('this is the undefined value:', value)
                      console.log("Retrieved value.")
               }catch(error){
                      console.log(error)
@@ -355,6 +359,7 @@ const GameContainer=(Props)=> {
                      var suits = '♠︎ ♥︎ ♣︎ ♦︎'.split(' ')
                      var index = parseInt(hand[i])
                      if(index <= 51){
+                          //index 0??
                             var value = (index % 13) + 1
                             var color = (index % 2== 0)? 'red': 'black'
                             var suit = value /13 | 0
@@ -401,9 +406,8 @@ const GameContainer=(Props)=> {
 
        const monitorPhase3Status=async ()=>{
               const timer = ms => new Promise(res => setTimeout(res, ms))
-              await timer(5000)
               var gamePhase = await getGameState()
-              console.log('this is the gamePhase: ', gamePhase)
+              console.log('this is the gamePhase: !!!!!', gamePhase)
               if(gamePhase === '1'){
                     setShowRP(()=>true)
                     await timer(2000)
@@ -412,32 +416,34 @@ const GameContainer=(Props)=> {
                    console.log('starting while loop: ')
                    console.log(gamePhase)
                      var gamePhase = await getGameState()
-                    //  if(gamePhase === '5'){
-                    //      monitorPhase5Status()
-                    //      console.log('Game Over. Phase 5')
-                    //      setRevealPhase(true)
-                    //      setCasinoTurn(true)
-                    //      getPlayerDeck()
-                    //      setUserAlert('')
-                    //      setTogglePayout(true)
-                    // }
+
+                     if(gamePhase === '5'){
+                         monitorPhase5Status()
+                         console.log('Game Over. Phase 5')
+                         setRevealPhase(true)
+                         setCasinoTurn(true)
+                         getPlayerDeck()
+                         setUserAlert('')
+                         setTogglePayout(true)
+                    }
                      await timer(2000)
               }
               
               if(gamePhase === '3'){
                      console.log(`It's your turn. Choose hit or stand.`)
+                     setHideInfo(()=> true)
                      setUserTurn(!userTurn)
                      await initiatePhaseThree()
               }
-              if(gamePhase === '5'){
-                     monitorPhase5Status()
-                     console.log('Game Over. Phase 5')
-                     setRevealPhase(true)
-                     setCasinoTurn(true)
-                     getPlayerDeck()
-                     setUserAlert('')
-                     setTogglePayout(true)
-              }
+          //     if(gamePhase === '5'){
+          //            monitorPhase5Status()
+          //            console.log('Game Over. Phase 5')
+          //            setRevealPhase(true)
+          //            setCasinoTurn(true)
+          //            getPlayerDeck()
+          //            setUserAlert('')
+          //            setTogglePayout(true)
+          //     }
        }
 
        const monitorPhase5Status=async()=>{
@@ -469,7 +475,7 @@ const GameContainer=(Props)=> {
                setUserAlert('Paying out.')
                const payout = await casinoContract.methods.Payout(userAddress).send({from: userAddress, to: casinoContractAddress})
                setUserAlert('Payout finished. Well clear your game data and refresh your game.')
-               await timer(5000)
+               await timer(10000)
                window.location.reload()
           }catch(error){
                console.log(error)
@@ -558,16 +564,15 @@ const GameContainer=(Props)=> {
                                           <div className={styles.game}>
                                                  {(showBetInput)?<div className={styles.message}>Please submit your bet to start the game.</div>:null}
                                                  {(gameResult != '')?<Prompt message={gameResult}/>: null}
-                                                 {/* <GameInfo /> */}
                                                  {(userAlert && userAlert != 'Choose again')?<div id={styles.userAlert}>
                                                         {(userAlert != 'Bet submission cancelled. Please resubmit your bet.')?<Loader type="Oval" color="#00BFFF" height={35} width ={35} />:null}
                                                         <Prompt message={userAlert}/>
                                                  </div>:<Prompt message={userAlert}/>}
                                                  {(showPatienceAlert)?<Prompt message={patienceAlert}/>: null}
-
-                                                 <DealerHand deckData={dealerCards} revealPhase={revealPhase}/>
-                                                 <UserHand deckData={userCards}/>
-                                                 {showRP?<button onClick={()=>handleRP(userAddressCheckSum)}>send RP</button>:null}
+                                                 {(!showBetInput && !hideInfo)?<GameInfo />:null}
+                                                 {(dealerCards)?<DealerHand deckData={dealerCards} revealPhase={revealPhase}/>:null}
+                                                 {(userCards)?<UserHand deckData={userCards}/>:null}
+                                                 {showRP?<SendRPButton id={styles.sendRPButton} onClick={()=>handleRP(userAddressCheckSum)}/>:null}
                                                  {(userTurn)?<Controls triggerHit={hit} triggerStand={stand} reConstruct={reConstruct} finalPayout={payout} showPayout={togglePayout} showFinalPayout={showFinalPayout} casinoTurn={casinoTurn} showModal={()=>setShowModal(!showModal)}/>:null}
                                           </div>
                                    </div> 
