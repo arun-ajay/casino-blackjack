@@ -1,7 +1,7 @@
 # Phase 2/3/5/7 Bots for Casino & Deposit Ethereum Script AND Python Server
 
 ## Overview
-<p>We've created several casino "bots" that are intended to act on behalf of the casino for phase 2/3/5/7. In addition, we wrote a simple script that can be executed anytime so that the casino can deposit 1 or more Ether into the smart contract. Finally, there is a server that we have created using Flask and Sqlite to retain the interaction between the user and casino outside of the smart contract.</p>
+<p>We've created several casino "bots" that are intended to act on behalf of the casino for phase 2/3/5/7 as well as an expired reveal bot. In addition, we wrote a simple script that can be executed anytime so that the casino can deposit 1 or more Ether into the smart contract. Finally, there is a server that we have created using Flask and Sqlite to retain the interaction between the user and casino outside of the smart contract.</p>
 
 ### Config.js and Config.py Setup
 
