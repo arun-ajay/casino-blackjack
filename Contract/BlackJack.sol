@@ -522,6 +522,7 @@ contract BlackJack {
  
         mapGamestate[Player] = GameState.Reveal;
         mapRevealExpiration[Player] = block.timestamp;
+        check_winning(Player);
     }
     
     
@@ -734,7 +735,7 @@ contract BlackJack {
             Game_Pushed(payable(player));
         }
     }
-    
+
     function getNewCard(uint256 index) public view returns (uint256){
          require(
             mapGamestate[msg.sender] != GameState.Inactive,
