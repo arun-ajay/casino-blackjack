@@ -1,4 +1,4 @@
-# smartcontract-coinflip
+# Smartcontract - BlackJack
 
 [FrontEnd](FrontEnd)
 This folder contains the files needed to run our FrontEnd; this will interact withour smart contract, server and bots. 
