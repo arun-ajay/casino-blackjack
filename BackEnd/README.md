@@ -51,7 +51,7 @@ python server.py
 
 You should see the following output on your terminal once you run your server.
 
-**Please note: Some systems may differ. For example, may have to use `python3 server.py` in instead of `python server.py`**
+*Please note: Some systems may differ. For example, may have to use `python3 server.py` in instead of `python server.py`*
 
 ```terminal
  * Serving Flask app "server" (lazy loading)
