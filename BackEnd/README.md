@@ -37,7 +37,9 @@ There are quite a few packages to install, please wait for it to install to comp
 
 **NOTE: IF ANYTHING WENT WRONG DURING INSTALLATION (You see installations that have failed) DELETE THE `node_modules` FOLDER IN `BackEnd` AND `package-lock.json`**
 
-### Initializing your python environment, database and server (MUST HAVE A BRAND NEW TERMINAL) 
+### Initializing your python environment, database and server 
+
+**NOTE: MUST HAVE A BRAND NEW TERMINAL
 
 To avoid conflicts with your own system, you must create your own Python environment to hold your packages. 
 Also, we'll have to set up a database for our server beforehand. 
@@ -66,7 +68,8 @@ You should see the following output on your terminal once you run your server.
 
 At this point, you can leave the server alone. It will behave on its own accord. 
 
-### Firing up your Node.js Casino Bots (EACH BOT MUST HAVE A BRAND NEW TERMINAL. DO NOT USE THE TERMINAL WHERE YOU RAN `npm install`)
+### Firing up your Node.js Casino Bots 
+**NOTE: EACH BOT MUST HAVE A BRAND NEW TERMINAL. DO NOT USE THE TERMINAL WHERE YOU RAN `npm install`**
 If you followed the above directions carefully you can now deploy your bot. This is capable of running 24/7 and will scan for games that are in phase 2/3/5/7 every 5 seconds. To run a bot, simply type the following command on the terminal:
 
 ```terminal
