@@ -41,29 +41,19 @@ const getExpiredRevealGames = async () => {
 
 const phaseRevealResponse =  async (activeGames) => {
     if (activeGames.length > 0){
-        console.log("Detected the following games")
+        console.log("Expired games detected:")
         console.log(activeGames)
         console.log()
     }
     for (i = 0; i < activeGames.length; i++){
         activeGame = activeGames[i]
-        console.log("Commiting casino actions...:",activeGame)
+        console.log("Sending the following player's game to clear phase...",activeGame)
 
-        const params = {
-            name: 'Payout',
-            type: 'function',
-            inputs: [
-                {
-                    type: 'address',
-                    name: activeGame
-                }
-            ]
-        }
     
         const gasPrice = await web3.eth.getGasPrice();
-        const gasEstimate = await casinoContract.methods.Payout(activeGame).estimateGas({ from: myAddress, to: activeGame  });
+        const gasEstimate = await casinoContract.methods.ExpiredGame(activeGame).estimateGas({ from: myAddress, to: activeGame  });
         
-        const response = await casinoContract.methods.Payout(activeGame).send({from: myAddress, to: activeGame, gasPrice: gasPrice, gas: gasEstimate })
+        const response = await casinoContract.methods.ExpiredGame(activeGame).send({from: myAddress, to: activeGame, gasPrice: gasPrice, gas: gasEstimate })
         console.log("Done!")
         console.log(response)
         console.log()
@@ -76,8 +66,11 @@ const main = async () => {
 
 
     const phaseRevealBot =  async () => {
+        console.log("- - - - - - - - - -")
+        console.log("Scanning expired phase 6 games...")
+        console.log()
+        
         var activeGames =  await getExpiredRevealGames()
-        console.log(activeGames)
         await phaseRevealResponse(activeGames)
         setTimeout(phaseRevealBot,5000)
     }

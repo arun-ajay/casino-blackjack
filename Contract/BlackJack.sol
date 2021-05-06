@@ -46,8 +46,7 @@ contract BlackJack {
     mapping(address => uint256) public mapBet;
  
     mapping(address => uint256) private mapRevealExpiration;
-    mapping(address => uint256) private mapPlayerTurnExpiration;
- 
+
     //Keeps track of game state and result using enumerators above
     mapping(address => GameState) public mapGamestate;
     mapping(address => GameResult) public mapGameResult;
@@ -180,6 +179,8 @@ contract BlackJack {
  
         return phase5;
     }
+
+
  
     //END OF BACKEND
  
@@ -523,6 +524,22 @@ contract BlackJack {
         mapGamestate[Player] = GameState.Reveal;
         mapRevealExpiration[Player] = block.timestamp;
         check_winning(Player);
+    }
+
+
+    function ExpiredGame(address player) external{
+        require(
+            msg.sender == casino,
+            "This function is only for casinos to use."
+        );
+        require(
+            mapGamestate[player] == GameState.Reveal,
+            "It is not the Casino's turn now"
+        );
+        mapGamestate[player] = GameState.Clear;
+        mapGameResult[player] = GameResult.Lost;
+        mapBet[player] = 0;
+
     }
     
     
