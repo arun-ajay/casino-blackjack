@@ -1,5 +1,12 @@
-export const abi = []
+const abi = []
 
-export const infuraProvider = ''
-export const smartContractAddress = ''
-export const casinoPrivateKey = ''
+const infuraProvider = ''
+const smartContractAddress = ''
+const casinoPrivateKey = ''
+
+module.exports ={
+     abi,
+     infuraProvider,
+     smartContractAddress,
+     casinoPrivateKey
+}
