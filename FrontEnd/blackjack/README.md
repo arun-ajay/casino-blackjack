@@ -1,35 +1,27 @@
-## FrontEnd v1. - Setup
+# FrontEnd Setup
 
 
-### Make sure you have the Backend ready first.
- - see [backend readme](https://github.com/arun-ajay/casino-blackjack/blob/main/BackEnd/README.md)
-
-### Prerequisites:
-
- - [ ] Backend (bots and other scripts)
- - [ ] Infura url (https://infura.io/dashboard/ethereum)
- - [ ] A Casino private key (this account will deploy smart contract, fund it, and run the bots)
- - [ ] Smart Contract (use remix to deploy)
- - [ ] Deployed smart contract address
+## BEFORE CONTINUING
+ - COMPLETE THE BACKEND INSTRUCTIONS [backend readme](https://github.com/arun-ajay/casino-blackjack/blob/main/BackEnd/README.md)
 
 
 #### Step-by-step setup:
 
-1. Make sure you have metamask extension & two seperate addresses.
-2. Open remix.ethereum.org, and deploy the smart contract inside of /Contract/Blackjack.sol
-6. Copy the smart contract's ABI 
+1. Make sure your terminal directory is set to `/FrontEnd/blackjack`
+2. Make sure your MetaMask account is set to the **USER account NOT the Casino account**.
+3. Copy the ABI that you have used in your `config.py` and `config.js` file. 
      - Place it inside the 'abi' variable inside:
-          - /Frontend/src/Abis/casinoAbi.js
-7. Paste your deployed smart contract address into the 'smartContractAddress' variable in:
-     - /Frontend/src/Config/config.js
-8. Use your terminal to change your directory to /Frontend/blackjack/
-     - > npm install
-10. Use a seperate terminal to change your directory to /Frontend/blackjack
+          - `/Frontend/src/Abis/casinoAbi.js`
+4. Similarly, place your deployed smart contract address into the `smartContractAddress` variable in:
+     - `/Frontend/src/Config/config.js`
+5. Now you need to install your node.js packages. 
+     - > Run `npm install` on your terminal
+6.  Your FrontEnd should be ready. 
      - Run 
           - If you use yarn: 
-               > yarn start.   ('localhost:3000/') will open in your chrome browser.
+               > `yarn start`.   ('localhost:3000/') will open in your chrome browser.
           - If you use npm:
-               > npm start.   ('localhost:3000/') will open in your chrome browser.
+               > `npm start`.   ('localhost:3000/') will open in your chrome browser.
 
      
 
