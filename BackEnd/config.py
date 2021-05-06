@@ -1,0 +1,5 @@
+abi=[]
+
+infuraProvider = ""
+casinoPrivateKey = ""
+smartContractAddress = ""
