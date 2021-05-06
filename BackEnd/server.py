@@ -11,7 +11,7 @@ import config
 import random
 import time
 import asyncio
-w3 = Web3(Web3.HTTPProvider(config.infuraProvider))
+w3 = Web3(Web3.HTTPProvider(config.web3Provider))
 accounts = w3.eth.account.privateKeyToAccount(config.casinoPrivateKey)
 account = accounts.address
 smartContractAddress= Web3.toChecksumAddress(config.smartContractAddress)
