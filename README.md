@@ -8,7 +8,7 @@ In this folder, you can find the files to automate Casino actions for phase 2/3/
 A server is also present to handle casino and user interactions outside of the smart contract. 
 In addition, there is a script for the casino to deposit more money into the smart contract. 
 
-[Smart Contract](CasinoSmartContract)
+[Smart Contract](Contract)
 In this folder, you can find our official `Blackjack.sol` smart contract. 
 
 [Testing](CasinoTesting)
