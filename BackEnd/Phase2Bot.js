@@ -11,7 +11,7 @@ const randomBinary = require("random-binary")
 const sqlite3 = require("sqlite3").verbose()
 const {open} = require('sqlite');
 
-const initSqlJs = require('sql.js')
+//const initSqlJs = require('sql.js')
 const provider = new Web3.providers.HttpProvider(config.web3Provider);
 const web3 = new Web3(provider);
 

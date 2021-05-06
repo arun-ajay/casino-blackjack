@@ -1,5 +1,0 @@
-abi=[]
-
-infuraProvider = ""
-casinoPrivateKey = ""
-smartContractAddress = ""
