@@ -58,7 +58,7 @@ const getPhase7Games = async () => {
 
 const phase7Response =  async (activeGames, nonce) => {
     if (activeGames.length > 0){
-        console.log("Detected the following games")
+        console.log("Games in phase 7 detected:")
         console.log(activeGames)
         console.log()
     }
@@ -100,6 +100,9 @@ const main = async () => {
 
      let nonce = await web3.eth.getTransactionCount(myAddress, 'pending')
     const phase7Bot =  async () => {
+        console.log("- - - - - - - - - -")
+        console.log("Scanning phase 7 games...")
+        console.log()
         var activeGames =  await getPhase7Games()
         console.log(activeGames)
         nonce += 33

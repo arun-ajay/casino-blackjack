@@ -40,11 +40,11 @@ def getGameState(address):
     })
 
 
-@app.route('/sendrp',methods = ["POST"])
+@app.route('/sendrp',methods = ["POST","OPTIONS"])
 @cross_origin()
 def sendrp():
     if request.method == "OPTIONS":
-        return build_preflight_response()
+        return build_preflight_response
 
     elif request.method == "POST":
         try:
@@ -99,11 +99,11 @@ def sendrp():
             print(str(e))
     
 
-@app.route('/gethash',methods = ["POST"])
+@app.route('/gethash',methods = ["POST","OPTIONS"])
 @cross_origin()
 def getHash():
     if request.method == "OPTIONS":
-        return build_preflight_response()
+        return build_preflight_response
 
     elif request.method == "POST":
         try:
@@ -159,11 +159,11 @@ def getHash():
             print(str(e))
     
 
-@app.route('/getrcom',methods = ["POST"])
+@app.route('/getrcom',methods = ["POST","OPTIONS"])
 @cross_origin()
 def getrcom():
     if request.method == "OPTIONS":
-        return build_preflight_response()
+        return build_preflight_response
 
     elif request.method == "POST":
         try:

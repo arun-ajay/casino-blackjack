@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = "http://0.0.0.0:5000"
+const API_URL = "http://127.0.0.1:5000"
 const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'
 
 const AxiosInstance = axios.create({
@@ -13,7 +13,7 @@ const AxiosInstance = axios.create({
 });
 
 
-const getAPI = (apiUrl) => AxiosInstance.get(PROXY_URL + apiUrl);
+const getAPI = (apiUrl) => AxiosInstance.get(apiUrl);
 
 const postAPI = (apiUrl, data) => AxiosInstance.post(apiUrl, data);
 

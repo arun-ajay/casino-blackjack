@@ -204,7 +204,7 @@ const main = async () => {
 
      const phase2Bot =  async () => {
           console.log("- - - - - - - - - -")
-          console.log("Scanning games...")
+          console.log("Scanning phase 2 games...")
           console.log()
    
           var phase2Games = await getPhase2Games()
