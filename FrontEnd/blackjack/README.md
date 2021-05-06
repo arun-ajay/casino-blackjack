@@ -2,9 +2,9 @@
 
 
 ### Make sure you have the Backend ready first.
-     - see backend readme.
+ - see [backend readme](https://github.com/arun-ajay/casino-blackjack/blob/main/BackEnd/README.md)
 
-### Make sure you have these ready:
+### Prerequisits:
 
  - [ ] Backend (bots and other scripts)
  - [ ] Infura url (https://infura.io/dashboard/ethereum)
