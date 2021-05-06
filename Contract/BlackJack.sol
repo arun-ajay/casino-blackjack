@@ -734,6 +734,30 @@ contract BlackJack {
             Game_Pushed(payable(player));
         }
     }
+    
+    function getNewCard(uint256 index) public view returns (uint256){
+         require(
+            mapGamestate[msg.sender] != GameState.Inactive,
+            "Cannot reveal cards yet!"
+        );
+ 
+        require(
+            mapGamestate[msg.sender] != GameState.Deck_shuffle,
+            "Cannot reveal cards yet!"
+        );
+ 
+        require(
+            mapGamestate[msg.sender] != GameState.Car_Distribution,
+            "Cannot reveal cards yet!"
+        );
+        require(
+            msg.sender != casino,
+            "You are not permitted to access this function"
+        );
+        
+        return mapPlayer_card[msg.sender][index];
+ 
+    }
  
     // This is phase 7
     function Clear(address player) external {

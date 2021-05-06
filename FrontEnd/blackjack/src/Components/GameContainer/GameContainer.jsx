@@ -198,7 +198,7 @@ const GameContainer=(Props)=> {
 
        const getCardAtIndex= async (index)=>{
               try{
-                     var value = await casinoContract.methods.mapPlayer_card(userAddress, index).call({from: userAddress})
+                     var value = await casinoContract.methods.getNewCard(index).call({from: userAddress})
                      console.log('this is the undefined value:', value)
                      console.log("Retrieved value.")
               }catch(error){
