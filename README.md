@@ -11,5 +11,5 @@ In addition, there is a script for the casino to deposit more money into the sma
 [Smart Contract](Contract)
 In this folder, you can find our official `Blackjack.sol` smart contract. 
 
-[Testing](CasinoTesting)
+[Testing](Testing)
 In this folder, you can find the files to execute flow & phase testing for our smart contract.
