@@ -7,7 +7,7 @@ const Web3 = require("web3");
 const provider = new Web3.providers.HttpProvider(config.web3Provider);
 const sqlite3 = require("sqlite3").verbose()
 const {open} = require('sqlite');
-const initSqlJs = require('sql.js')
+//const initSqlJs = require('sql.js')
 const web3 = new Web3(provider);
 web3.eth.net.isListening()
 .then(() => console.log('web3 is connected'))
