@@ -36,6 +36,7 @@ npm install
 There are quite a few packages to install, please wait for it to install to completion.
 
 **NOTE: IF ANYTHING WENT WRONG DURING INSTALLATION (You see installations that have failed) DELETE THE `node_modules` FOLDER IN `BackEnd` AND `package-lock.json`**
+**MAKE SURE YOU USE A NEW TERMINAL WHEN YOU DO THIS**
 
 ### Initializing your python environment, database and server 
 
