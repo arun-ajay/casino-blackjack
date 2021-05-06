@@ -95,4 +95,4 @@ Please note that transactions may take 10-30 seconds to process.
 
 
 
-**You're now ready to interact with the UI! 😊**
+**You're now ready to interact continue with the FrontEnd instructions! 😊**
