@@ -1,0 +1,41 @@
+.container{
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-content: center;
+}
+
+#input{
+       height: 40px;
+       width: 50%;
+       border: 2.2px solid rgba(0, 0, 0, 0.1);
+       border-radius: 5px;
+       font-size: 24px;
+       margin-bottom: 15px;
+}
+#input:focus{
+       outline: none;
+}
+
+#form{
+       display: inline-flex;
+       justify-content: center;
+       align-items: center;
+       flex-direction: column;
+}
+
+#formHeader{
+       font-size: 18px;
+}
+
+#submitButton{
+       border: 1px solid rgba(0, 0, 0, 0.5);
+       border-radius: 5px;
+       background: none;
+       width: 100px;
+       height: 35px;
+}
+
+#submitButton:hover{
+       outline: none;
+}

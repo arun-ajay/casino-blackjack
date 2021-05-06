@@ -1,0 +1,33 @@
+.intructionsContainer{
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       
+       color: white;
+       font-size: 22px;
+       max-width: 50%;
+       min-height: 50vh;
+       display: flex;
+}
+
+#welcome{
+       display: flex;
+       flex-direction: row;
+       font-size: 38px;
+}
+
+#spade{
+       color: black;
+}
+
+#diamond{
+       color: darkred;
+}
+
+#club{
+       color: darkred;
+}
+
+#heart{
+       color: black;
+}

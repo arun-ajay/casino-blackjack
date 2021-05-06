@@ -1,0 +1,158 @@
+.gameContainer{
+       display: inline-flex;
+       flex-direction: column;
+       align-self: center;
+       min-width: 50%;
+       -webkit-box-shadow: 5px 5px 15px -2px rgba(0,0,0,0.45); 
+box-shadow: 5px 5px 15px -2px rgba(0,0,0,0.55);
+border-top-left-radius: 15px;
+       border-top-right-radius: 15px;
+}
+
+.header{
+       display: inline-block;
+       -webkit-box-shadow: 0px 4px 15px -4px rgba(0,0,0,0.1); 
+       box-shadow: 0px 4px 15px -4px rgba(0,0,0,0.05);
+       // border: 1px solid black;
+       padding: 10px;
+       background-color: rgb(51, 51, 51);
+       border-top-left-radius: 15px;
+       border-top-right-radius: 15px;
+       color: white;
+       font-size: 24px;
+       border-bottom: 1px solid rgb(107, 107, 107);
+}
+
+.body{
+       display: inline-flex;
+       flex-direction: row;
+       // border: 1px solid black;
+       border-top: none;
+       min-height: 60vh;
+       min-width: 60vw;
+}
+
+#sendRPButton{
+     width: 150px;
+     cursor: pointer;
+}
+
+.grantMetaMaskButton{
+       height: 50px;
+       border: 2.5px solid rgb(32, 27, 61);
+       border-radius: 15px;
+       font-size: 18px;
+       margin-bottom: 15px;
+       padding-left: 10px;
+       padding-right: 10px;
+       color: white;
+       background-color: rgba(255, 255, 255, 0);
+       cursor: pointer;
+}
+
+.grantMetaMaskButton:hover{
+       background-color: rgba(255, 255, 255, 0.137);
+}
+.grantMetaMaskButton:focus{
+       outline: none;
+}
+
+
+.initBody{
+       display: flex;
+       flex-direction:column;
+       justify-content: center;
+       align-items: center;
+       border-top: none;
+       min-height: 150px;
+       background:linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('../../Assets/blackjack_table.jpeg');
+       background-size: cover;
+}
+
+.controlPanel{
+       display: flex;
+       background-color: white;
+       justify-content: center;
+       align-items: center;
+       // border-right: 1px solid black;
+       width: 30%;
+       // height: 100%;
+
+}
+
+.game{
+       display: flex;
+       width: 100%;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       padding: 15px;
+       background:linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('../../Assets/blackjack_table.jpeg');
+       background-size: cover;
+}
+
+.message{
+       color: white;
+       font-size: 24px;
+}
+
+#userAlert{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       margin-right: 15px;
+}
+
+.modalWrapper{
+       position: absolute;
+       // left: 0;
+       top: 0;
+       // padding: 15px;
+       height: 100vh;
+       // width: 100%;
+       display: flex;
+       justify-content: center;
+       align-items:center;
+       // margin: 50px;
+       z-index: 2;
+       background-color: rgba(0, 0, 0, 0.6);
+}
+
+.credits{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       display: flex;
+       color: rgba(255, 255, 255, 1);
+       text-shadow: 2px 1px 2px rgba(0, 0, 0, 0.432);
+}
+
+.names{
+       padding: 20px;
+}
+
+#confettiContainer{
+     position: absolute;
+     top: 0;
+     z-index: 1;
+}
+
+
+/* Desktops and laptops ----------- */
+@media only screen  and (min-width : 1224px) {
+     .header{
+       padding: 7px;
+       font-size: 20px;
+   }
+}
+     
+/* Large screens ----------- */
+@media only screen  and (min-width : 1824px) {
+     .header{
+          padding: 10px;
+          font-size: 24px;
+   }
+   
+}
