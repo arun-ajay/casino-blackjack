@@ -65,7 +65,7 @@ contract BlackJack {
     //Keeps a log of all addresses that interacted with this smart contract
     address[] addressKeys;
     uint256 public minBet = 0.001 ether;
-    uint256 public expireTime = 1; //ONE MINUTE EXPIRATION
+    uint256 public expireTime = 5; //FIVE MINUTE EXPIRATION
  
     constructor() public {
         casino = msg.sender;
