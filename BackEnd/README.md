@@ -40,6 +40,7 @@ There are quite a few packages to install, please wait for it to install to comp
 To avoid conflicts with your own system, you must create your own Python environment to hold your packages. 
 Also, we'll have to set up a database for our server beforehand. 
 Please follow the following instructions in your terminal and make sure you are within the `BackEnd\` folder. 
+*Please note: Some systems may differ. For example, may have to use `python3 server.py` in instead of `python server.py`*
 
 ```terminal
 python -m venv env
@@ -48,11 +49,7 @@ pip install -r requirements.txt
 python createDatabases.py
 python server.py
 ```
-
 You should see the following output on your terminal once you run your server.
-
-*Please note: Some systems may differ. For example, may have to use `python3 server.py` in instead of `python server.py`*
-
 ```terminal
  * Serving Flask app "server" (lazy loading)
  * Environment: production
