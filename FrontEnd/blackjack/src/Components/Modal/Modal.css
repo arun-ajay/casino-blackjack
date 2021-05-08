@@ -1,0 +1,150 @@
+.modalContainer{
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       /* border: 1px solid black; */
+       border-radius: 15px;
+       padding: 15px;
+       /* width: 100%; */
+       height: 100vh;
+       height: fit-content;
+       background-color: rgb(248, 248, 248);
+       -webkit-box-shadow: 1px 1px 15px -1px rgba(0,0,0,0.24); 
+       box-shadow: 1px 1px 15px -1px rgba(0,0,0,0.24);
+       margin: 100px;
+       z-index: 99;
+}
+
+#note{
+     color: darkred;
+}
+
+.box{  
+       display: contents;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       max-width: 70%;
+       /* height: 70vh; */
+}
+
+.deck1{
+       display: flex;
+       flex-direction: row;
+       flex-wrap: wrap;
+       justify-content: center;
+       background-color: rgb(250, 250, 250);
+       -webkit-box-shadow: inset 1px 1px 15px -7px rgba(0,0,0,0.37); 
+       box-shadow: inset 1px 1px 15px -7px rgba(0,0,0,0.37);
+}
+
+.deckbinary{
+       display: flex;
+       flex-wrap: wrap;
+       flex-direction: row;
+       justify-content: center;
+       background-color: rgb(250, 250, 250);
+       -webkit-box-shadow: inset 1px 1px 15px -7px rgba(0,0,0,0.37); 
+       box-shadow: inset 1px 1px 15px -7px rgba(0,0,0,0.37);
+}
+
+#deckHeader{
+       font-size: 18px;
+       font-weight: 600;
+       margin-top: 5px;
+       font-family: Helvetica
+}
+
+#binaryHeader{
+       font-size: 18px;
+       font-weight: 600;
+       margin-top: 25px;
+       font-family: Helvetica
+}
+
+.finalCards{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       flex-wrap: wrap;
+}
+
+.closeDiv{
+       width:100%;
+       display: flex;
+       flex-flow: row-reverse;
+       align-items: center;
+}
+
+#how-it-works{
+       font-size: 20px;
+       margin-right: 35px;
+       cursor: pointer;
+}
+
+#closeButton{
+       font-size: 20px;
+       margin-right: 5px;
+       padding: 5px;
+       cursor: pointer;
+       width: 35px;
+       height: 35px;
+}
+
+.hands-section{
+       display: flex;
+       flex-direction: row
+}
+
+#handHeaders{
+       font-size: 18px;
+       font-weight: 600;
+       margin-top: 55px;
+       font-family: Helvetica;
+       margin-right: 45px;
+       margin-left: 45px;
+       display: flex;
+       flex-direction: column;
+}
+
+#userHandModal{
+     font-weight: 400;
+     display: flex;
+     flex-direction: row;
+       margin-top: 20px;
+       margin-bottom: 50px;
+}
+
+
+#dealerHandModal{
+     display: flex;
+     flex-direction: row;
+       margin-top: 20px;
+       margin-bottom: 50px;
+       font-weight: 400;
+}
+
+#verticalBar{
+       border-right: 1px solid rgba(0, 0, 0, 0.2);
+       margin-top:15px;
+}
+
+.bottomWrapper{
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+}
+
+.dataTipContainer{
+       display: flex;
+       flex-direction: column;
+       font-size: 24px;
+}
+
+#dataTipContents{
+       margin: 10px;
+       font-size: 18px;
+}

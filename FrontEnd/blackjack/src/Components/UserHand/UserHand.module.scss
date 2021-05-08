@@ -1,0 +1,16 @@
+.userHandContainer{
+       display: inline-flex;
+       flex-direction: column;
+       align-self: center;
+       padding: 15px;
+}
+
+.cards{
+       display: flex;
+       flex-direction: row;
+}
+.title{
+       color: white;
+       font-family: Helvetica;
+       font-weight: 700;
+}

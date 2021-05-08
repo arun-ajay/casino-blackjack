@@ -1,0 +1,52 @@
+.gameInfoContainer{
+     display: inline-block;
+     line-height: 20px;
+     // width: 100%;
+     flex-direction: column;
+     border: 1px solid rgba(255, 255, 255, 0.3);
+     color: white;
+     background-color: rgba(255, 255, 255, 0.05);
+     border-radius: 20px;
+     justify-content: center;
+     align-items: center;
+     width: 60vw;
+     // padding: 15px;
+     padding-top: 0px;
+     padding-right: 15px;
+     // padding-bottom: 15px;
+     padding-left: 15px;
+}
+
+.lines{
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin-top: 5px;
+     margin-bottom:5px;
+     font-size: 16px;
+     width: 60vw;
+}
+
+#line{
+     border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+#header{
+     font-size: 20px;
+}
+
+#point{
+     // margin-top: 50px;
+}
+
+.infographicContainer{
+     display: inline-flex;
+     width: 75%;
+}
+
+.bottomSection{
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items:center;
+}
