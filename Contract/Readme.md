@@ -30,9 +30,9 @@
 
 **mapping(address => GameResult) public mapGameResult** - Mapping between player's account address and the game result.
 
-**mapping(address => uint256) private player_AceCount** - Mapping between player's account address and the number of the ace in the player's cards.
+**mapping(address => uint256) private player_AceCount** - Mapping between player's account address and the number of the ace in the player's cards. We need to keep track of Ace count because Ace in Blackjack can count as one or eleven depends on the total value.
 
-**mapping(address => uint256) private casino_AceCount** Mapping between casino's account address and the number of the ace in the casino's cards.
+**mapping(address => uint256) private casino_AceCount** Mapping between casino's account address and the number of the ace in the casino's cards. We need to keep track of Ace count because Ace in Blackjack can count as one or eleven depends on the total value.
 
 **mapping(address => bytes32) public map_rCom1_hash** - Mapping between player's account address and the hash of the first half of the rcom (312 bit binary number from the casino). Use for cheating detection.
 
