@@ -46,7 +46,7 @@
 
 **uint256 public minBet = 0.001 ether** - the minimum betting amount.
 
-**uint256 public expireTime = 1** - The amount of time before the game is automatically resolved.
+**uint256 public expireTime = 5** - The amount of time before the game is automatically resolved.
 
 **constructor() public** - Set the casino's account address to the person who deploys the contract.
 
@@ -64,7 +64,7 @@ the function provides important information that prevents the player from bettin
 
 **function getPhase5Games() public view returns (address[] memory)** - Only the casino can call this function. This function can access all the players' addresses through addressKeys globe variable. The function will return an array of addresses that store the player's account address that reaches the Casino_Turn phase.
 
-**function getExpiredReveal() public view returns (address[] memory)** - Only the casino can call this function. This function returns an array of player's addresses that exceeds the expired time of the game in the reveal phase. This can prevent players from maliciously holds the game. 
+**function getExpiredReveal() public view returns (address[] memory)** - Only the casino can call this function. This function returns an array of player's addresses that exceeds the expired time of the game in the reveal phase. This can prevent players from maliciously holds the game after know they are losing the game. The default expiration time is set to 5 minutes in our smart contract. 
 
 **function check_winning(address player) public** - This function can only be called in the reveal phase. The function takes a player's account address as the argument. This function will set mapGameResult to Won if the player wins the game, Lost if the player loses the game, Push if the game is a tie.
 
