@@ -78,7 +78,7 @@ contract BlackJack {
             msg.sender == casino,
             "Only the casino may withdraw money into the smart contract"
         );
-        payable(msg.sender).transfer(address(this).balance);
+        payable(msg.sender).transfer(maxBet());
     }
  
     //Deposit money to the smart contract
