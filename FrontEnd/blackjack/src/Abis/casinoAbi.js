@@ -1,1 +1,0 @@
-export const casinoAbi = [] // put your deployed smart contract's ABI array here.
