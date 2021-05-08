@@ -108,7 +108,7 @@ the function provides important information that prevents the player from bettin
 
 **function Casino_check(address player) private view returns (uint256)** - Return the total value of casino's cards with player's account address as argument (each player has corresponding casino's cards through mapping).
 
-**function compare(address player) private view returns (string memory)** This function calls Player_check & Casino_check functions to get the total value of player's & casino's cards. Based on those values, determine game result and return the result as string. 
+**function compare(address player) private view returns (string memory)** This function calls Player_check & Casino_check functions to get the total value of player's & casino's cards. Based on those values, determine game result and return the result as string. The string result will be used by Payout function to decide who is getting the money.
 
 **function Casino_Win(address player) private** This function is executed by the Payout function if the casino won the game, the money will be stored in the smart contract and casino can withdraw it.
 
