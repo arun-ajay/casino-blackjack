@@ -1,9 +1,35 @@
 .promptContainer{
-       display: inline-block;
-       align-self: center;
-     //   padding: 15px;
-       color: white;
-       font-family: Helvetica;
-       font-size: 20px;
-       font-weight: bold;
+     display: inline-block;
+     align-self: center;
+   //   padding: 15px;
+     color: white;
+     font-family: Helvetica;
+     font-size: 16px;
+     font-weight: bold;
+}
+
+/* Desktops and laptops ----------- */
+@media only screen  and (min-width : 1224px) {
+     .promptContainer{
+          display: inline-block;
+          align-self: center;
+        //   padding: 15px;
+          color: white;
+          font-family: Helvetica;
+          font-size: 16px;
+          font-weight: bold;
+   }
+}
+     
+/* Large screens ----------- */
+@media only screen  and (min-width : 1824px) {
+     .promptContainer{
+          display: inline-block;
+          align-self: center;
+        //   padding: 15px;
+          color: white;
+          font-family: Helvetica;
+          font-size: 20px;
+          font-weight: bold;
+   }
 }

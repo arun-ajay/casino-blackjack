@@ -11,11 +11,11 @@ const Instructions=()=> {
                      <p id={styles.club}>♣️</p>
                      <p id={styles.heart}>♥</p>
                  </div>    
-                 <p>The objective of the game is to reach 21, or be closer to 21 than the dealer.</p>
-                 <p>The dealer will begin by shuffling and distributing 2 cards.</p>
-                 <p>If your cards total 21, you win.</p>
-                 <p>If your cards total over 21, you lose. </p>
-                 <p>If your cards total less than 21, you will have the option to hit (request another card) or stand (stick with your current cards).</p>
+                 <div className={styles.lines}>The objective of the game is to reach 21, or be closer to 21 than the dealer.</div>
+                 <div className={styles.lines}>The dealer will begin by shuffling and distributing 2 cards.</div>
+                 <div className={styles.lines}>If your cards total 21, you win.</div>
+                 <div className={styles.lines}>If your cards total over 21, you lose. </div>
+                 <div className={styles.lines}>If your cards total less than 21, you will have the option to hit (request another card) or stand (stick with your current cards).</div>
               </div>
        )
 }

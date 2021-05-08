@@ -16,7 +16,7 @@ const GameInfo=(props)=> {
                     </div>
                     <div className={styles.lines}> Similarly, the player (you) will generate their own seperate RANDOM 312 bits. We'll call this 'rP' (player-generated).
                     </div>
-                    <div className={styles.lines}>rCom and rP will be split in HALF to account for solidity function input limitations. This gives us rCom1, rCom2, rP1 and rP2 (each 156 bits).
+                    <div className={styles.lines}>rCom and rP will be split in HALF to account for solidity input limitations. This gives us rCom1, rCom2, rP1 and rP2 (each 156 bits).
                     </div>
                     <div className={styles.lines}>We then take the XOR operation of rCom1 and rP1, to generate rFy1 (rFy1 = rCom1 XOR rP1). Similarly, rFy2 = rCom2 XOR rP2).
                     </div>

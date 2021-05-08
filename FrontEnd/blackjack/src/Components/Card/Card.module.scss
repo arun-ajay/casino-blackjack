@@ -64,17 +64,46 @@
 @media only screen  and (min-width : 1224px) {
      .cardContainerBlack{
           border-radius: 10px;
-          width: 130px;
-          height: 180px;
+          width: 100px;
+          height: 150px;
           margin: 5px;
           font-size: 28px;
    }
    .cardContainerRed{
      border-radius: 10px;
-     width: 130px;
-     height: 180px;
+     width: 100px;
+     height: 150px;
      margin: 5px;
      font-size: 28px;
+}
+.cardContainerSmolRed{
+     display: flex;
+     align-items: center;
+     border: 3px solid red;
+     color: red;
+     border-radius: 10px;
+     width: 35px;
+     height: 60px;
+     margin: 5px;
+     font-size: 14px;
+     justify-content: center;
+     background: white;
+     -webkit-box-shadow: 4px 4px 2px -1px rgba(0,0,0,0.15); 
+     box-shadow: 4px 4px 2px -1px rgba(0,0,0,0.15);
+}
+.cardContainerSmol{
+     display: flex;
+     align-items: center;
+     border: 3px solid black;
+     border-radius: 10px;
+     width: 35px;
+     height: 60px;
+     margin: 5px;
+     font-size: 14px;
+     justify-content: center;
+     background: white;
+     -webkit-box-shadow: 4px 4px 2px -1px rgba(0,0,0,0.15); 
+     box-shadow: 4px 4px 2px -1px rgba(0,0,0,0.15);
 }
 }
      

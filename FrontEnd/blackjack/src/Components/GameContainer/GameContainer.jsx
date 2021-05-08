@@ -596,8 +596,8 @@ const GameContainer=(Props)=> {
                                                  {(showPatienceAlert)?<Prompt message={patienceAlert}/>: null}
                                                  {(shuffleAlert != '')?<Prompt message={shuffleAlert}/>: null}
                                                  {(!showBetInput && !hideInfo)?<GameInfo />:null}
-                                                 {(dealerCards)?<DealerHand deckData={dealerCards} revealPhase={revealPhase}/>:null}
-                                                 {(userCards)?<UserHand deckData={userCards}/>:null}
+                                                 {(dealerCards === [])?null:<DealerHand deckData={dealerCards} revealPhase={revealPhase}/>}
+                                                 {(userCards === [])?null:<UserHand deckData={userCards}/>}
                                                  {showRP?<SendRPButton id={styles.sendRPButton} onClick={()=>handleRP(userAddressCheckSum)}/>:null}
                                                  {(userTurn)?<Controls triggerHit={hit} triggerStand={stand} reConstruct={reConstruct} finalPayout={payout} showPayout={togglePayout} showFinalPayout={showFinalPayout} casinoTurn={casinoTurn} showModal={()=>setShowModal(!showModal)} showReconstruct={clickReconstruct}/>:null}
                                           </div>
