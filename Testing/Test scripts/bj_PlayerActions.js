@@ -197,52 +197,5 @@ contract('Player Action', async accounts => {
     console.log("Test 6 gamestate = " + Gamestate7);
   });
 
-  // it("Player account balance check", async () =>{
-  //   let account_casino = accounts[0];
-  //   let account_user7 = accounts[7];
-  //   let depositeFund = 10000000000000000000;
-  //   let betAmount = 50000000000000000;
-  //   let player7_total_card_value = 0;
-
-  //   //casino deploys contract
-  //   const instance = await BlackJack.deployed({ from: account_casino });
-  //   //casino deposite money into smart contract
-  //   await instance.depositMoney({ value: depositeFund });
-  //   //obtain player balance before starting the game
-  //   const playerBalanceBefore = await web3.eth.getBalance(account_user7);
-  //   //player starts a game
-  //   await instance.initializeGame({ from: account_user7, value: betAmount });
-  //   await instance.Casino_get_deck(account_user7, { from: account_casino });
-  //   await instance.distribute(account_user7, { from: account_casino });
-
-
-  //   console.log("user7 address =" + account_user7);
-  //   while(player7_total_card_value < 21){
-  //     await instance.Player_Hit({ from: account_user7 });
-  //     player7_total_card_value = await instance.Player_check.call(account_user7);
-  //     console.log("player7_total_card_value = " + player7_total_card_value);
-  //   }
   
-  //   if(player7_total_card_value == 21){
-  //     await instance.Stand({ from: account_user7 });
-  //   }
-
-  //   let gameState = await instance.getGameStateByKey.call(account_user7);
-  //   console.log("test 7: gameState for Test7 =" + gameState);
-  //   let gameResult = await instance.getGameResultByKey.call(account_user7);
-  //   console.log("test 7: gameResult for Test7 =" + gameResult);
-
-  //   await instance.Stand({from: account_user7});
-  //   await instance.Casino_Turn(account_user7, {from: account_casino});
-
-  //   gameResult = await instance.getGameResultByKey.call(account_user7);
-  //   console.log("test 7: gameResult for Test7 =" + gameResult);
-
-  //   //obtain player balance after the game
-  //   const playerBalanceAfter = await web3.eth.getBalance(account_casino);
-
-  //   console.log("test 7: playerBalanceBefore =" + playerBalanceBefore);
-  //   console.log("test 7: playerBalanceAfter =" + playerBalanceAfter);
-
-  // });
 });
