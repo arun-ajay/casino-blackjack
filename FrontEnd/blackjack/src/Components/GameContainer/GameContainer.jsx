@@ -425,42 +425,6 @@ const GameContainer=(Props)=> {
                     await initiatePhaseThree()
               }
 
-          //     if(gamePhase === '1'){
-          //           setShowRP(()=>true)
-          //           await timer(2000)
-          //      }
-          //     while(gamePhase !== '3'){
-          //          console.log('starting while loop: ')
-          //          console.log(gamePhase)
-          //            var gamePhase = await getGameState()
-
-          //            if(gamePhase === '5'){
-          //                monitorPhase5Status()
-          //                console.log('Game Over. Phase 5')
-          //                setRevealPhase(true)
-          //                setCasinoTurn(true)
-          //                getPlayerDeck()
-          //                setUserAlert('')
-          //                setTogglePayout(true)
-          //           }
-          //            await timer(2000)
-          //     }
-              
-          //     if(gamePhase === '3'){
-          //            console.log(`It's your turn. Choose hit or stand.`)
-          //            setHideInfo(()=> true)
-          //            setUserTurn(!userTurn)
-          //            await initiatePhaseThree()
-          //     }
-          //     if(gamePhase === '5'){
-          //            monitorPhase5Status()
-          //            console.log('Game Over. Phase 5')
-          //            setRevealPhase(true)
-          //            setCasinoTurn(true)
-          //            getPlayerDeck()
-          //            setUserAlert('')
-          //            setTogglePayout(true)
-          //     }
        }
 
        const monitorPhase5Status=async()=>{
