@@ -64,7 +64,7 @@ const DealerHand = Props => {
         {deck
           ? deck.map((card, index) => (
               <div className={styles.innerCards}>
-                <Card number={card.value} suit={card.suit} color={card.color} />{" "}
+                <Card number={card.value} suit={card.suit} color={card.color} />
                 {Props.revealPhase ? null : <Card />}
               </div>
             ))

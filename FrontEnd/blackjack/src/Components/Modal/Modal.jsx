@@ -218,7 +218,6 @@ const Modal = props => {
                   }
                   index={index}
                 >
-                  {" "}
                   [ {card} ]
                 </div>
               ))
