@@ -117,6 +117,8 @@ const GameContainer=(Props)=> {
                })
                .catch((error)=>{
                      console.log(error)
+
+
                })    
 
               return data
