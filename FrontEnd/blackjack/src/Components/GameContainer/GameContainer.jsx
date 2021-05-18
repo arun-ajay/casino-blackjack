@@ -26,21 +26,15 @@ const GameContainer=(Props)=> {
        const casinoContractAddress = smartContractAddress
        const casinoContract = new web3.eth.Contract(casinoAbi, casinoContractAddress)
 
-       const [message, setMessage]= useState('Default Alert')
-       const [deck, setDeck]=useState()
 
        const [newDeck, setNewDeck]=useState()
 
-       const [testDeck, setTestDeck]=useState()
-       const [testState, setTestState]=useState([])
        const [userCards, setUserCards]= useState([])
-       const [userScore, setUserScore]= useState(0)
        const [userAddress, setUserAddress]= useState('')
        const [userAddressCheckSum, setUserAddressCheckSum]=useState('')
        const [userBetAmount, setUserBetAmount]=useState(0)
 
        const [dealerCards, setDealerCards]= useState([])
-       const [dealerScore, setDealerScore]= useState(0)
 
        const [rP1, setRP1]=useState('')
        const [rP2, setRP2]=useState('')
@@ -48,12 +42,8 @@ const GameContainer=(Props)=> {
        const [rCom1, setRCom1]=useState('')
        const [rCom2, setRCom2]=useState('')
 
-       const [balance, setBalance]= useState(100)
-       const [bet, setBet]= useState(0)
-
        const [userTurn, setUserTurn]=useState(false)
 
-       const [userChoice, setUserChoice]=useState('')
        const [userAlert, setUserAlert]=useState('')
 
        const [showBetInput, setShowBetInput]=useState(true)
@@ -61,8 +51,6 @@ const GameContainer=(Props)=> {
        const [gameResult, setGameResult]= useState('')
 
        const [togglePayout, setTogglePayout]= useState(false)
-
-       const [areButtonsDisabled, setAreButtonsDisabled]= useState(false)
 
        const [casinoTurn, setCasinoTurn]=useState(false)
        const [revealPhase, setRevealPhase]=useState(false)
